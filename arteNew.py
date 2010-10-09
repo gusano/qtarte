@@ -4,19 +4,20 @@
 #
 # Date: Mon Oct  4 2010     
 # Author : Vincent Vande Vyvre <vins@swing.be>
-# Version 0.1
-# Revision 2
+# Version : 0.1
+# Revision : 3
 #
 # Graphical user's interface for Arte7Recorder version Qt
 #
-# arte7recorder https://launchpad.net/~arte+7recorder
-# qtarte https://code.launchpad.net/~arte+7recorder/+junk/qtarte
+# arte7recorder : https://launchpad.net/~arte+7recorder
+# qtarte : https://code.launchpad.net/~arte+7recorder/+junk/qtarte
 #
 # Warning : Use this script only for testing
 
 
 
 import os
+import sys
 import shutil
 import pickle
 import glob
@@ -37,7 +38,7 @@ class Ui_MainWindow(object):
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
-        self.preview = Preview(self.splitter)
+        self.preview = Preview(self, self.splitter)
 
         self.editor = QtGui.QTextEdit(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, 
@@ -74,7 +75,7 @@ class Ui_MainWindow(object):
         self.verticalLayout = QtGui.QVBoxLayout()
 
         # List of selected videos for download
-        self.list_dwnld = ListDwnld(self.dockWidgetContents)
+        self.list_dwnld = ListDwnld(self, self.dockWidgetContents)
         self.verticalLayout.addWidget(self.list_dwnld)
 
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -136,6 +137,8 @@ class Ui_MainWindow(object):
         self.save_pitch_btn.setSizePolicy(sizePolicy)
         self.save_pitch_btn.setText("Save text")
         self.verticalLayout.addWidget(self.save_pitch_btn)
+        self.fake_btn = QtGui.QToolButton(self.dockWidgetContents)
+        self.fake_btn.hide()
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.tool_panel.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.tool_panel)
@@ -158,10 +161,26 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Options.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
 
+        QtCore.QObject.connect(self.action_Folder, QtCore.SIGNAL
+                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_Index, QtCore.SIGNAL
+                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_Connection, QtCore.SIGNAL
+                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_About, QtCore.SIGNAL
+                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_Download, QtCore.SIGNAL
+                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_Cancel, QtCore.SIGNAL
+                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_Quit, QtCore.SIGNAL
+                                ("triggered()"), self.closeEvent)
+
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.show()
+        self.editor.append(u"\n\n    Connection à  http://arte7.arte.tv ...")
         QtCore.QCoreApplication.processEvents()
         MainWindow.closeEvent = self.closeEvent
 
@@ -172,20 +191,27 @@ class Ui_MainWindow(object):
         self.download_btn.clicked.connect(self.download)
         self.cancel_btn.clicked.connect(self.cancel)
         self.save_pitch_btn.clicked.connect(self.record_pitch)
+        self.fake_btn.clicked.connect(self.progress_notify)
 
         self.set_buttons(False)
         self.add_btn.setEnabled(False)
         self.active_download = False
         self.thumb_folder = os.path.join(os.getcwd(), "thumbnails")
-        self.populate()
+        self.arte = None
+        self.stop = False
+        self.prog_val = 0
+        #self.populate()
 
-
+    def nihil(self):
+        pass
     #---------------------------------------
     # Events
     #---------------------------------------
 
-    def closeEvent(self,event):
+    def closeEvent(self, event=None):
         """Quiet exit. """
+        if self.active_download:
+            pass
         if self.index:
             try:
                 with open(self.thumb_folder + "/index", "w") as objfile:
@@ -234,7 +260,10 @@ class Ui_MainWindow(object):
     def populate(self):
         """Show available movies in preview window.
 
+        liststore = [[title, date, url movie, url thumbnail], [], ...]
         """
+        print "Populate ..."
+        self.editor.append("    Lecture des contenus ...")
         if os.path.isfile(self.thumb_folder + "/index"):
             # Load index of pitchs
             try:
@@ -260,7 +289,7 @@ class Ui_MainWindow(object):
         self.thumb = os.path.join(self.thumb_folder, item[1] + ".jpg")
         if not os.path.isfile(self.thumb):
             #print "No thumb"
-            img_ldr = ImageLoader(item[3])
+            img_ldr = ImageLoader(self, item[3])
             img_ldr.start()
         else:
             self.next_thumbnail(self.thumb)
@@ -295,10 +324,13 @@ class Ui_MainWindow(object):
                                     self.liststore[self.counter][1] + ".jpg")
             if not os.path.isfile(self.thumb):
                 #print "No thumb"
-                img_ldr = ImageLoader(self.liststore[self.counter][3])
+                img_ldr = ImageLoader(self, self.liststore[self.counter][3])
                 img_ldr.start()
             else:
                 self.next_thumbnail(self.thumb)
+        else:
+            self.editor.clear()
+            return True
 
 
 
@@ -309,10 +341,10 @@ class Ui_MainWindow(object):
         txt -- title (unicode)
         """
         f = txt
-        if len(txt) > 20:
-            f = "".join([txt[:20], "\n", txt[20:]])
-        elif len(txt) > 40:
+        if len(txt) > 40:
             f = "".join([txt[:21], "\n", txt[21:41], "\n", txt[41:]])
+        elif len(txt) > 20:
+            f = "".join([txt[:20], "\n", txt[20:]])
         return f
 
 
@@ -380,6 +412,39 @@ class Ui_MainWindow(object):
         return False
 
 
+    def download_notify(self, state):
+        """Print in the text editor the download status.
+
+        Keyword arguments:
+        state -- status of downloadind : 1 : begin
+                                         2 : completed
+                                         3 : cancel
+                                       str : error
+        """
+        if state == 1:
+            print self.list_dwnld.lst_movies
+            title = self.list_dwnld.item(0).text()
+            title.replace("\n", "")
+            self.editor.append(u"Téléchargement de " + title + " ....")            
+        elif state == 2:
+            item = self.list_dwnld.item(0)
+            self.list_dwnld.takeItem(0)
+            self.list_dwnld.lst_movies.pop(0)
+            del item
+            self.editor.insertPlainText(u" terminé.")
+        elif state == 3:
+            self.editor.insertPlainText(u" interrompu.")
+            self.editor.append(u"Téléchargements annulés.")
+        elif isinstance(state, str):
+            self.editor.insert(u" échec. Cause : " + state)
+        
+    def progress_notify(self):
+        """Update progress bar
+
+        """
+        self.prog_bar.setValue(self.prog_val)
+
+
     #---------------------------------------
     # Tool buttons
     #---------------------------------------
@@ -423,7 +488,6 @@ class Ui_MainWindow(object):
         sel = self.list_dwnld.selectedItems()
         if not sel:
             return
-        #self.print_list()
         rows = []
         for s in sel:
             rows.append(self.list_dwnld.row(s))
@@ -438,14 +502,12 @@ class Ui_MainWindow(object):
             self.list_dwnld.lst_movies.insert(r-1, 
                                     self.list_dwnld.lst_movies.pop(r))
             item.setSelected(True)
-        #self.print_list()
 
     def move_down(self):
         #print "Move down"
         sel = self.list_dwnld.selectedItems()
         if not sel:
             return
-        #self.print_list()
         rows = []
         for s in sel:
             rows.append(self.list_dwnld.row(s))
@@ -460,17 +522,38 @@ class Ui_MainWindow(object):
             self.list_dwnld.insertItem(r+1, item)             
             self.list_dwnld.lst_movies.insert(r+1, self.list_dwnld.lst_movies.pop(r))
             item.setSelected(True)
-        #self.print_list()
 
 
     def download(self):
         print "Download"
+        #liststore = [[title, date, url movie, url thumbnail], [], ...]
+        self.downloads = []
+        self.list_dwnld.clearSelection()
+        for i in self.list_dwnld.lst_movies:
+            for j in self.liststore:
+                if i == j[2]:
+                    self.downloads.append(j)
+        movie_ldr = MovieLoader(self, self.arte, self.downloads)
+        movie_ldr.start()
+
 
     def cancel(self):
         print "Cancel"
+        self.arte.abort_dwnld = True
+        self.stop = True
+
 
     def record_pitch(self):
         print "Save texte"
+
+
+
+    #---------------------------------------
+    # Warnings
+    #---------------------------------------
+
+    def on_error_data(self, msg):
+        print "Error with database :", msg
 
 
     #---------------------------------------
@@ -533,8 +616,9 @@ class Ui_MainWindow(object):
 
 
 class Preview(QtGui.QListWidget):
-    def __init__(self, parent=None):
+    def __init__(self, ui, parent=None):
         super(Preview, self).__init__(parent)
+        self.ui = ui
         self.setStyleSheet("QWidget {color: white; background: black}")
         self.setDragEnabled(True)
         self.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
@@ -550,7 +634,7 @@ class Preview(QtGui.QListWidget):
     def startDrag(self, event):
         #print "Mouse press event"
         it = self.itemAt(event.pos())
-        idx = ui.items.index(it)
+        idx = self.ui.items.index(it)
         if not it:
             return
 
@@ -559,7 +643,7 @@ class Preview(QtGui.QListWidget):
 
         drag = QtGui.QDrag(self)
         drag.setMimeData(mimeData)
-        pixmap = QtGui.QPixmap(ui.videos[idx].pixmap)
+        pixmap = QtGui.QPixmap(self.ui.videos[idx].pixmap)
         drag.setPixmap(pixmap)
         drag.setHotSpot(QtCore.QPoint(pixmap.width()/2, pixmap.height()))
         drag.setPixmap(pixmap)
@@ -573,22 +657,22 @@ class Preview(QtGui.QListWidget):
     def mousePressEvent(self, event):
         if not self.itemAt(event.pos()):
             self.clearSelection()
-            ui.add_btn.setEnabled(False)
+            self.ui.add_btn.setEnabled(False)
             event.accept()
         elif event.button() == 1:
             self.itemAt(event.pos()).setSelected(True)
-            ui.add_btn.setEnabled(True)
+            self.ui.add_btn.setEnabled(True)
             event.accept()            
         elif event.button() == 2:
             self.itemAt(event.pos()).setSelected(True)
-            ui.show_pitch()
+            self.ui.show_pitch()
             event.accept()
         else:
             event.ignore()
 
     def mouseDoubleClickEvent(self, event):
         if self.itemAt(event.pos()):
-            ui.move_item(self.itemAt(event.pos()))
+            self.ui.move_item(self.itemAt(event.pos()))
             event.accept()
         else:
             event.ignore()
@@ -608,8 +692,9 @@ class Preview(QtGui.QListWidget):
 
 
 class ListDwnld(QtGui.QListWidget):
-    def __init__(self, parent=None):
+    def __init__(self, ui, parent=None):
         super(ListDwnld, self).__init__(parent)
+        self.ui = ui
         self.setBaseSize(QtCore.QSize(150, 0))
         self.setDragDropMode(QtGui.QAbstractItemView.DropOnly)
         self.setAlternatingRowColors(True)
@@ -618,17 +703,18 @@ class ListDwnld(QtGui.QListWidget):
         self.setIconSize(QtCore.QSize(100, 100))
         self.lst_movies = []
 
-        self.currentItemChanged.connect(ui.select_video)
-        self.itemClicked.connect(ui.selection_changed)
+        self.currentItemChanged.connect(self.ui.select_video)
+        self.itemClicked.connect(self.ui.selection_changed)
 
 
     def mousePressEvent(self, event):
         if not self.itemAt(event.pos()):
             self.clearSelection()
-            ui.set_buttons(False)
+            self.ui.set_buttons(False)
             event.accept()
         else:
             self.itemAt(event.pos()).setSelected(True)
+            self.ui.set_buttons(True)
             event.ignore()
 
 
@@ -660,15 +746,16 @@ class ListDwnld(QtGui.QListWidget):
     def add_object(self, item):
         #print "Item : ", item, type(item)
         idx = eval(str(item))
-        img = ui.videos[idx].pixmap
+        img = self.ui.videos[idx].pixmap
+        text = self.ui.set_thumbnail_text(self.ui.videos[idx].title)
         pix = img.scaled(100, 100, QtCore.Qt.KeepAspectRatio, 
                                 QtCore.Qt.FastTransformation)
         item = QtGui.QListWidgetItem(self)
         item.setIcon(QtGui.QIcon(pix))
-        item.setText(ui.videos[idx].title)
+        item.setText(text)
         item.setTextAlignment(QtCore.Qt.AlignHCenter)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        self.lst_movies.append(ui.videos[idx].url)
+        self.lst_movies.append(self.ui.videos[idx].url)
         #print "File added :", ui.videos[idx].url
 
 
@@ -708,16 +795,36 @@ class ImageLoader(Thread):
     """Thumbnail loader.
 
     """
-    def __init__(self, url):
+    def __init__(self, ui, url):
         self.url = url
+        self.ui = ui
         Thread.__init__(self)
 
     def run(self):
         with open("image.jpg", 'wb') as objfile:
             f = urllib2.urlopen(self.url)
             objfile.write(f.read())
-        ui.sgl.emit_signal()
+        self.ui.sgl.emit_signal()
 
+
+
+class MovieLoader(Thread):
+    """Movie loader.
+
+    """
+    def __init__(self, ui, arte, movies):
+        self.ui = ui
+        self.arte = arte
+        self.movies = movies
+        Thread.__init__(self)
+
+
+    def run(self):
+        self.arte.on_telecharge(self.movies)
+        while 1:
+            if self.ui.stop:
+                break
+            time.sleep(2)
 
 if __name__ == "__main__":
     import sys

@@ -2,7 +2,7 @@
 **************  arteNew  *************************
 
 Version : testing
-Revision : 2
+Revision : 3
 Statut : uncomplete, unstable
 Date : oct 09 2010
 Author : Vincent Vande Vyvre <vins@swing.be>
@@ -49,4 +49,7 @@ REVISION NOTES
                         - Caching features
 
 #   2   oct 09 2010     - Select video by double-click 
-                        - add sorting features 
+                        - Add sorting features 
+
+#   3   oct 09 2010     - Implementation of arte7recorder.py and Catalog.py
+                        - build testing version
