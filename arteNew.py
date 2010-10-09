@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 
-# arteGui
+# arteNew.py
 #
 # Date: Mon Oct  4 2010     
 # Author : Vincent Vande Vyvre <vins@swing.be>
 # Version 0.1
+# Revision 2
 #
 # Graphical user's interface for Arte7Recorder version Qt
+#
+# arte7recorder https://launchpad.net/~arte+7recorder
+# qtarte https://code.launchpad.net/~arte+7recorder/+junk/qtarte
 #
 # Warning : Use this script only for testing
 
@@ -170,6 +174,7 @@ class Ui_MainWindow(object):
         self.save_pitch_btn.clicked.connect(self.record_pitch)
 
         self.set_buttons(False)
+        self.add_btn.setEnabled(False)
         self.active_download = False
         self.thumb_folder = os.path.join(os.getcwd(), "thumbnails")
         self.populate()
@@ -212,10 +217,15 @@ class Ui_MainWindow(object):
     def move_item(self, item):
         """Item in preview windows has double-clicked.
 
+        When an item in preview is double-clicked, he's selected for
+        download.
+
         Keyword arguments:
         item -- item double-clicked
         """
-        print "Item :", item
+        #print "Item :", item
+        idx = self.items.index(item)
+        self.list_dwnld.add_object(idx)
 
     #---------------------------------------
 
@@ -249,7 +259,7 @@ class Ui_MainWindow(object):
         item = self.liststore[0]
         self.thumb = os.path.join(self.thumb_folder, item[1] + ".jpg")
         if not os.path.isfile(self.thumb):
-            print "No thumb"
+            #print "No thumb"
             img_ldr = ImageLoader(item[3])
             img_ldr.start()
         else:
@@ -258,6 +268,7 @@ class Ui_MainWindow(object):
 
 
     def next_thumbnail(self, thumb=None):
+        #print "len :", len(self.liststore), self.counter, thumb
         video_item = VideoItem(self.liststore[self.counter])
         if thumb == None:
             shutil.copy("image.jpg", self.thumb)
@@ -280,9 +291,10 @@ class Ui_MainWindow(object):
 
         self.counter += 1
         if not len(self.liststore) == self.counter:
-            self.thumb = os.path.join(self.thumb_folder, self.liststore[self.counter][1] + ".jpg")
+            self.thumb = os.path.join(self.thumb_folder, 
+                                    self.liststore[self.counter][1] + ".jpg")
             if not os.path.isfile(self.thumb):
-                print "No thumb"
+                #print "No thumb"
                 img_ldr = ImageLoader(self.liststore[self.counter][3])
                 img_ldr.start()
             else:
@@ -368,8 +380,21 @@ class Ui_MainWindow(object):
         return False
 
 
+    #---------------------------------------
+    # Tool buttons
+    #---------------------------------------
+
+    def add_video(self):
+        #print "Add video"
+        try:
+            idx = self.items.index(self.preview.selectedItems()[0])
+            self.list_dwnld.add_object(idx)
+        except:
+            pass
+
+
     def remove_video(self):
-        print "Remove"
+        #print "Remove"
         sel = self.list_dwnld.selectedItems()
         if self.active_download in sel:
             sel.remove(self.active_download)
@@ -386,15 +411,57 @@ class Ui_MainWindow(object):
             self.list_dwnld.lst_movies.pop(i)
             del item
 
+    def print_list(self):
+        """Debug function"""
+        for i in self.list_dwnld.lst_movies:
+            print i
+        print "\n"
 
-    def add_video(self):
-        print "Add video"
 
     def move_up(self):
-        print "Move up"
+        #print "Move up"
+        sel = self.list_dwnld.selectedItems()
+        if not sel:
+            return
+        #self.print_list()
+        rows = []
+        for s in sel:
+            rows.append(self.list_dwnld.row(s))
+        rows.sort()
+
+        for r in rows:
+            if r == 0:
+                continue
+            item = self.list_dwnld.item(r)
+            self.list_dwnld.takeItem(r)
+            self.list_dwnld.insertItem(r-1, item)             
+            self.list_dwnld.lst_movies.insert(r-1, 
+                                    self.list_dwnld.lst_movies.pop(r))
+            item.setSelected(True)
+        #self.print_list()
 
     def move_down(self):
-        print "Move down"
+        #print "Move down"
+        sel = self.list_dwnld.selectedItems()
+        if not sel:
+            return
+        #self.print_list()
+        rows = []
+        for s in sel:
+            rows.append(self.list_dwnld.row(s))
+        rows.sort()
+        rows.reverse()
+
+        for r in rows:
+            if r == self.list_dwnld.count():
+                continue
+            item = self.list_dwnld.item(r)
+            self.list_dwnld.takeItem(r)
+            self.list_dwnld.insertItem(r+1, item)             
+            self.list_dwnld.lst_movies.insert(r+1, self.list_dwnld.lst_movies.pop(r))
+            item.setSelected(True)
+        #self.print_list()
+
 
     def download(self):
         print "Download"
@@ -427,7 +494,7 @@ class Ui_MainWindow(object):
                         "&Options", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow", 
                         "&File", None, QtGui.QApplication.UnicodeUTF8))
-        self.menu_Help.setTitle(QtGui.QApplication.translate("MainWindow", 
+        self.menu_Help.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.add_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
                         "Add the selected video.", None, 
@@ -477,7 +544,7 @@ class Preview(QtGui.QListWidget):
         self.setFlow(QtGui.QListView.LeftToRight)
         self.setViewMode(QtGui.QListView.IconMode)
 
-        self.itemDoubleClicked.connect(ui.move_item)
+        #self.itemDoubleClicked.connect(ui.move_item)
     
 
     def startDrag(self, event):
@@ -504,9 +571,27 @@ class Preview(QtGui.QListWidget):
         event.accept()
 
     def mousePressEvent(self, event):
-        if event.button() == 2:
+        if not self.itemAt(event.pos()):
+            self.clearSelection()
+            ui.add_btn.setEnabled(False)
+            event.accept()
+        elif event.button() == 1:
+            self.itemAt(event.pos()).setSelected(True)
+            ui.add_btn.setEnabled(True)
+            event.accept()            
+        elif event.button() == 2:
             self.itemAt(event.pos()).setSelected(True)
             ui.show_pitch()
+            event.accept()
+        else:
+            event.ignore()
+
+    def mouseDoubleClickEvent(self, event):
+        if self.itemAt(event.pos()):
+            ui.move_item(self.itemAt(event.pos()))
+            event.accept()
+        else:
+            event.ignore()
             
 
 
@@ -534,7 +619,17 @@ class ListDwnld(QtGui.QListWidget):
         self.lst_movies = []
 
         self.currentItemChanged.connect(ui.select_video)
-        self.itemClicked .connect(ui.selection_changed)
+        self.itemClicked.connect(ui.selection_changed)
+
+
+    def mousePressEvent(self, event):
+        if not self.itemAt(event.pos()):
+            self.clearSelection()
+            ui.set_buttons(False)
+            event.accept()
+        else:
+            self.itemAt(event.pos()).setSelected(True)
+            event.ignore()
 
 
     def dragEnterEvent(self, event):
@@ -574,7 +669,7 @@ class ListDwnld(QtGui.QListWidget):
         item.setTextAlignment(QtCore.Qt.AlignHCenter)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.lst_movies.append(ui.videos[idx].url)
-        print "File added :", ui.videos[idx].url
+        #print "File added :", ui.videos[idx].url
 
 
 class VideoItem(QtCore.QObject):

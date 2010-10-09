@@ -1,0 +1,52 @@
+
+**************  arteNew  *************************
+
+Version : testing
+Revision : 2
+Statut : uncomplete, unstable
+Date : oct 09 2010
+Author : Vincent Vande Vyvre <vins@swing.be>
+Language : English
+Translated : To do
+
+URL OF PROJECT
+==============
+
+    https://code.launchpad.net/~arte+7recorder/+junk/qtarte
+
+
+DESCRIPTION
+===========
+
+    arteNew is an user interface writed in python with the framework
+    Qt for arte7recorder    https://launchpad.net/~arte+7recorder
+
+
+REQUIRED
+========
+
+    PyQt v4.4 or higer
+
+LICENCE
+=======
+
+    arteNew is under GNU General Public Licence v.3
+
+USAGE
+=====
+
+    Testing only
+
+TODO
+====
+
+    All
+
+REVISION NOTES
+==============
+
+#   1   oct 08 2010     - Basical interface
+                        - Caching features
+
+#   2   oct 09 2010     - Select video by double-click 
+                        - add sorting features 
