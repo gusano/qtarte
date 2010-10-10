@@ -197,6 +197,8 @@ class Ui_MainWindow(object):
         self.add_btn.setEnabled(False)
         self.active_download = False
         self.thumb_folder = os.path.join(os.getcwd(), "thumbnails")
+        if not os.path.isdir(self.thumb_folder):
+            os.mkdir(self.thumb_folder)
         self.arte = None
         self.stop = False
         self.prog_val = 0
