@@ -5,7 +5,7 @@
 # Date: Mon Oct  4 2010     
 # Author : Vincent Vande Vyvre <vins@swing.be>
 # Version : 0.1
-# Revision : 3
+# Revision : 4
 #
 # Graphical user's interface for Arte7Recorder version Qt
 #
@@ -26,6 +26,8 @@ import urllib2
 import re
 from threading import Thread
 import BeautifulSoup as BS
+
+from setting import*
 
 from PyQt4 import QtCore, QtGui
 
@@ -142,15 +144,13 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.tool_panel.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.tool_panel)
-        self.action_Folder = QtGui.QAction(MainWindow)
-        self.action_Index = QtGui.QAction(MainWindow)
+        self.action_Settings = QtGui.QAction(MainWindow)
         self.action_Connection = QtGui.QAction(MainWindow)
         self.action_About = QtGui.QAction(MainWindow)
         self.action_Download = QtGui.QAction(MainWindow)
         self.action_Cancel = QtGui.QAction(MainWindow)
         self.action_Quit = QtGui.QAction(MainWindow)
-        self.menu_Options.addAction(self.action_Folder)
-        self.menu_Options.addAction(self.action_Index)
+        self.menu_Options.addAction(self.action_Settings)
         self.menu_File.addAction(self.action_Connection)
         self.menu_File.addAction(self.action_Download)
         self.menu_File.addAction(self.action_Cancel) 
@@ -161,18 +161,16 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_Options.menuAction())
         self.menubar.addAction(self.menu_Help.menuAction())
 
-        QtCore.QObject.connect(self.action_Folder, QtCore.SIGNAL
-                                ("triggered()"), self.nihil)
-        QtCore.QObject.connect(self.action_Index, QtCore.SIGNAL
-                                ("triggered()"), self.nihil)
+        QtCore.QObject.connect(self.action_Settings, QtCore.SIGNAL
+                                ("triggered()"), self.set_settings)
         QtCore.QObject.connect(self.action_Connection, QtCore.SIGNAL
-                                ("triggered()"), self.nihil)
+                                ("triggered()"), self.reconnect)
         QtCore.QObject.connect(self.action_About, QtCore.SIGNAL
                                 ("triggered()"), self.nihil)
         QtCore.QObject.connect(self.action_Download, QtCore.SIGNAL
-                                ("triggered()"), self.nihil)
+                                ("triggered()"), self.download)
         QtCore.QObject.connect(self.action_Cancel, QtCore.SIGNAL
-                                ("triggered()"), self.nihil)
+                                ("triggered()"), self.cancel)
         QtCore.QObject.connect(self.action_Quit, QtCore.SIGNAL
                                 ("triggered()"), self.closeEvent)
 
@@ -193,15 +191,34 @@ class Ui_MainWindow(object):
         self.save_pitch_btn.clicked.connect(self.record_pitch)
         self.fake_btn.clicked.connect(self.progress_notify)
 
+        self.colors = ["Black", "Blue",   
+                    "Cyan", "Dark blue", 
+                    "Dark cyan", "Dark grey",
+                    "Dark green", "Dark magenta",
+                    "Dark red", "Dark yellow",
+                    "Grey", "Green", 
+                    "Light grey", "Magenta", 
+                    "Red", "White",
+                    "Yellow"]
         self.set_buttons(False)
         self.add_btn.setEnabled(False)
         self.active_download = False
         self.thumb_folder = os.path.join(os.getcwd(), "thumbnails")
         if not os.path.isdir(self.thumb_folder):
             os.mkdir(self.thumb_folder)
+        self.config_file = os.path.join(os.getcwd(), "config.cfg")
+        if not os.path.isfile(self.config_file):
+            self.cfg = {"folder": "", "pitch": False, "color": 0, 
+                            "thumb1": 160, "thumb2": 80}
+            try:
+                with open(self.config_file, "w") as objf:
+                    pickle.dump(self.cfg, objf)
+            except Exception, why:
+                print "Erreur de sauvegarde du fichier config.cfg :", why
+        self.update_gui()
         self.arte = None
         self.stop = False
-        self.prog_val = 0
+        #self.prog_val = 0
         #self.populate()
 
     def nihil(self):
@@ -213,7 +230,24 @@ class Ui_MainWindow(object):
     def closeEvent(self, event=None):
         """Quiet exit. """
         if self.active_download:
-            pass
+            mssg = QtGui.QMessageBox()
+            mssg.setIcon(QtGui.QMessageBox.Question)
+            mssg.setText(u"Un téléchargement est en cours.")
+            mssg.setInformativeText(u"Désirez-vous interrompre le transfert ?")
+            can = QtGui.QPushButton("Annuler")
+            mssg.addButton(can, QtGui.QMessageBox.ActionRole)
+            qut = QtGui.QPushButton("Quitter")
+            mssg.addButton(qut, QtGui.QMessageBox.ActionRole)
+            mssg.setDefaultButton(can)
+            reply = mssg.exec_()
+            print "reply :", reply, str(mssg.clickedButton().text())
+            if reply == 0:
+                if event:
+                    event.accept()
+                    return
+            self.cancel()
+            time.sleep(1)
+            
         if self.index:
             try:
                 with open(self.thumb_folder + "/index", "w") as objfile:
@@ -257,7 +291,20 @@ class Ui_MainWindow(object):
 
     #---------------------------------------
 
-
+    def update_gui(self):
+        try:
+            with open("config.cfg", "r") as objf:
+                c = pickle.load(objf)
+        except:
+            print "Fichier 'config.cfg' introuvable"
+        else:
+            self.cfg = c
+        style = "".join(["QWidget {color: white; background: ", 
+                                    self.colors[self.cfg["color"]], "}"])
+        self.preview.setStyleSheet(style)
+        self.preview.setIconSize(QtCore.QSize(self.cfg["thumb1"], self.cfg["thumb1"]))
+        self.list_dwnld.setIconSize(QtCore.QSize(self.cfg["thumb2"], self.cfg["thumb2"]))
+        #QtCore.QSize(160, 160))
 
     def populate(self):
         """Show available movies in preview window.
@@ -415,7 +462,7 @@ class Ui_MainWindow(object):
 
 
     def download_notify(self, state):
-        """Print in the text editor the download status.
+        """Print, in the text editor, the download status.
 
         Keyword arguments:
         state -- status of downloadind : 1 : begin
@@ -434,17 +481,20 @@ class Ui_MainWindow(object):
             self.list_dwnld.lst_movies.pop(0)
             del item
             self.editor.insertPlainText(u" terminé.")
+            self.active_download = False
         elif state == 3:
             self.editor.insertPlainText(u" interrompu.")
             self.editor.append(u"Téléchargements annulés.")
+            self.active_download = False
         elif isinstance(state, str):
             self.editor.insert(u" échec. Cause : " + state)
+            self.active_download = False
         
-    def progress_notify(self):
+    def progress_notify(self, val):
         """Update progress bar
 
         """
-        self.prog_bar.setValue(self.prog_val)
+        self.prog_bar.setValue(val)
 
 
     #---------------------------------------
@@ -543,10 +593,22 @@ class Ui_MainWindow(object):
         print "Cancel"
         self.arte.abort_dwnld = True
         self.stop = True
+        return
 
 
     def record_pitch(self):
         print "Save texte"
+
+    def reconnect(self):
+        self.arte.refresh()
+
+    def set_settings(self):
+        Dialog = QtGui.QDialog()
+        sett = Setting()
+        sett.setupUi(Dialog)
+        reply = Dialog.exec_()
+        if reply == 1:
+            self.update_gui()
 
 
 
@@ -600,10 +662,8 @@ class Ui_MainWindow(object):
         self.save_pitch_btn.setStatusTip(QtGui.QApplication.translate(
                         "MainWindow", "Save the pitch.", None, 
                         QtGui.QApplication.UnicodeUTF8))
-        self.action_Folder.setText(QtGui.QApplication.translate("MainWindow", 
-                        "&Folder", None, QtGui.QApplication.UnicodeUTF8))
-        self.action_Index.setText(QtGui.QApplication.translate("MainWindow", 
-                        "&Index", None, QtGui.QApplication.UnicodeUTF8))
+        self.action_Settings.setText(QtGui.QApplication.translate("MainWindow", 
+                        "&Préferences", None, QtGui.QApplication.UnicodeUTF8))
         self.action_Connection.setText(QtGui.QApplication.translate("MainWindow", 
                         "&Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.action_About.setText(QtGui.QApplication.translate("MainWindow", 
@@ -702,7 +762,7 @@ class ListDwnld(QtGui.QListWidget):
         self.setAlternatingRowColors(True)
         self.setSelectionMode(QtGui.QAbstractItemView
                                     .MultiSelection)
-        self.setIconSize(QtCore.QSize(100, 100))
+        self.setIconSize(QtCore.QSize(80, 80))
         self.lst_movies = []
 
         self.currentItemChanged.connect(self.ui.select_video)

@@ -2,7 +2,7 @@
 **************  arteNew  *************************
 
 Version : testing
-Revision : 3
+Revision : 4
 Statut : uncomplete, unstable
 Date : oct 09 2010
 Author : Vincent Vande Vyvre <vins@swing.be>
@@ -45,11 +45,17 @@ TODO
 REVISION NOTES
 ==============
 
-#   1   oct 08 2010     - Basical interface
-                        - Caching features
+#   5   oct 10 2010     - Implementation of menus,
+                          warning message on exit,
+                          settings dialog box
+   
+#   4   oct 10 2010     - Bug fix with thumbnail folder
+
+#   3   oct 09 2010     - Implementation of arte7recorder.py and Catalog.py
+                        - build testing version
 
 #   2   oct 09 2010     - Select video by double-click 
                         - Add sorting features 
 
-#   3   oct 09 2010     - Implementation of arte7recorder.py and Catalog.py
-                        - build testing version
+#   1   oct 08 2010     - Basical interface
+                        - Caching features

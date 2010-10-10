@@ -126,13 +126,15 @@ class Arte7(object):
         ui.arte = self
         reply = ui.populate()
         self.abort_dwnld = False
+        self.p_signal = ProgressSignal()
+        self.p_signal.bind(ui)
 
         #self.dirconf = os.path.expanduser('~') + '/.arteplus7'
         self.c_dir = os.getcwd()
         self.dirconf = self.c_dir 
-        self.config = ConfigParser.RawConfigParser()
-        if not os.path.isdir(self.dirconf):
-            os.mkdir(self.dirconf)
+        #self.config = ConfigParser.RawConfigParser()
+        #if not os.path.isdir(self.dirconf):
+            #os.mkdir(self.dirconf)
             #self.first = 'yes'
         #self.fileconf = os.path.join(self.c_dir, 'config.cfg')
         #if not os.path.isfile(self.fileconf):
@@ -141,13 +143,18 @@ class Arte7(object):
 
         #self.config.read(self.fileconf)
         #self.directory = self.config.get('Repertoire', 'dir')
-        self.directory = os.path.join(self.c_dir, "videos")
+        while 1:
+            if not ui.cfg["folder"]:
+                ui.set_settings()
+            else:
+                break
+        self.directory = ui.cfg["folder"]
         if not os.path.isdir(self.directory):
             os.mkdir(self.directory)
 
     def notify(self, n_signal):
         #img_uri = "/usr/share/pixmaps/arte-icon.png"
-        img_uri = "medias/arte-icon.png"        
+        img_uri = "medias/icon.png"        
         pynotify.init("Arte+7 Recorder")
         notification = pynotify.Notification(self.nom_emi, "Download complete", img_uri)
         notification.show()
@@ -160,12 +167,16 @@ class Arte7(object):
         return True
 
 
+    def refresh(self):
+        ui.editor.setText(u"\n\n    Connection à  http://arte7.arte.tv ...")
+        make_connection()
+        ui.populate()
+
+
     #Download
     def on_telecharge(self, movies):
         n_signal = NotifySignal()
-        n_signal.bind(self, ui)
-        p_signal = ProgressSignal()
-        p_signal.bind(self, ui)
+        n_signal.bind(ui)
         for n in movies:
             url_page = n[2]
             self.nom_emi = n[0]
@@ -173,6 +184,7 @@ class Arte7(object):
             self.nom_fichier = self.nom_fichier.replace("/", "-")
             n_signal.value = 1
             n_signal.emit_signal()
+            ui.active_download = True
             try:
                 rtmp_url = get_rtmp_url(url_page, quality = "hd")
                 signal_fin = False
@@ -180,11 +192,8 @@ class Arte7(object):
                     if percent == -1.0:
                         raise IOError()
                     signal_fin = percent == 100.0
-                    ui.prog_val = int(percent)
-                    ui.fake_btn.click()
-                    #p_signal.value = int(percent)
-                    #p_signal.emit_signal()
-                    #ui.prog_bar.setValue(int(percent))
+                    self.p_signal.value = int(percent)
+                    self.p_signal.emit_signal()
                     if self.abort_dwnld:
                         if subprocess_pid is not None:
                             os.kill( subprocess_pid, signal.SIGINT )
@@ -211,8 +220,7 @@ class NotifySignal(QtCore.QObject):
     """
     loadFinished = QtCore.pyqtSignal()
 
-    def bind(self, arte, ui):
-        self.arte = arte
+    def bind(self, ui):
         self.ui = ui
         self.value = None
         self.loadFinished.connect(self.next)
@@ -231,8 +239,7 @@ class ProgressSignal(QtCore.QObject):
     """
     loadProgress = QtCore.pyqtSignal()
              
-    def bind(self, arte, ui):
-        self.arte = arte
+    def bind(self, ui):
         self.ui = ui
         self.value = None
         self.loadProgress.connect(self.next)
@@ -243,12 +250,7 @@ class ProgressSignal(QtCore.QObject):
     def next(self):
         self.ui.progress_notify(self.value)
 
-
-if __name__ == "__main__":
-    app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
-    ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+def make_connection():
     catalog = Catalog()
     try:
         with open('database', 'w') as datalist:
@@ -259,6 +261,14 @@ if __name__ == "__main__":
     except IOError, why:
         reply = ui.on_error_data(why)
         sys.exit()
+
+
+if __name__ == "__main__":
+    app = QtGui.QApplication(sys.argv)
+    MainWindow = QtGui.QMainWindow()
+    ui = Ui_MainWindow()
+    ui.setupUi(MainWindow)
+    make_connection()
     
     arte = Arte7()
     
