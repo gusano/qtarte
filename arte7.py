@@ -125,6 +125,7 @@ class Arte7(object):
         # Wake up GUI
         ui.arte = self
         reply = ui.populate()
+        ui.cleaning()
         self.abort_dwnld = False
         self.p_signal = ProgressSignal()
         self.p_signal.bind(ui)

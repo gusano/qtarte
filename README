@@ -2,9 +2,9 @@
 **************  arteNew  *************************
 
 Version : testing
-Revision : 4
-Statut : uncomplete, unstable
-Date : oct 09 2010
+Revision : 5
+Statut : uncomplete, stable
+Date : oct 10 2010
 Author : Vincent Vande Vyvre <vins@swing.be>
 Language : English
 Translated : To do
@@ -18,7 +18,7 @@ URL OF PROJECT
 DESCRIPTION
 ===========
 
-    arteNew is an user interface writed in python with the framework
+    arteNew is an user interface written in python with the framework
     Qt for arte7recorder    https://launchpad.net/~arte+7recorder
 
 
@@ -35,15 +35,22 @@ LICENCE
 USAGE
 =====
 
-    Testing only
+    Extract the archive in your home.
+    Open a shell in this folder and enter :  python arte7.py
 
 TODO
 ====
 
-    All
+    Save the pitch of all movies downloaded.
+    Translate to french and german 
+    ...
+    (Your ideas hier)
 
 REVISION NOTES
 ==============
+#   6   oct 10 2010     - Implementation of a cleaner for the folder of thumbnails
+                          and the file index
+                        - Add the size of window in config.cfg
 
 #   5   oct 10 2010     - Implementation of menus,
                           warning message on exit,

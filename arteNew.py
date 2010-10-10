@@ -40,7 +40,7 @@ class Ui_MainWindow(object):
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
-        self.preview = Preview(self, self.splitter)
+        self.preview = Preview(self, MainWindow, self.splitter)
 
         self.editor = QtGui.QTextEdit(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, 
@@ -180,7 +180,7 @@ class Ui_MainWindow(object):
         MainWindow.show()
         self.editor.append(u"\n\n    Connection à  http://arte7.arte.tv ...")
         QtCore.QCoreApplication.processEvents()
-        MainWindow.closeEvent = self.closeEvent
+        MainWindow.closeEvent = self.closeEvent       
 
         self.add_btn.clicked.connect(self.add_video)
         self.remove_btn.clicked.connect(self.remove_video)
@@ -209,13 +209,15 @@ class Ui_MainWindow(object):
         self.config_file = os.path.join(os.getcwd(), "config.cfg")
         if not os.path.isfile(self.config_file):
             self.cfg = {"folder": "", "pitch": False, "color": 0, 
-                            "thumb1": 160, "thumb2": 80}
+                            "thumb1": 160, "thumb2": 80, "size": (900, 700)}
             try:
                 with open(self.config_file, "w") as objf:
                     pickle.dump(self.cfg, objf)
             except Exception, why:
                 print "Erreur de sauvegarde du fichier config.cfg :", why
         self.update_gui()
+        if self.cfg.has_key("size"):
+            MainWindow.resize(self.cfg["size"][0], self.cfg["size"][1])
         self.arte = None
         self.stop = False
         #self.prog_val = 0
@@ -240,7 +242,6 @@ class Ui_MainWindow(object):
             mssg.addButton(qut, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
             reply = mssg.exec_()
-            print "reply :", reply, str(mssg.clickedButton().text())
             if reply == 0:
                 if event:
                     event.accept()
@@ -254,9 +255,15 @@ class Ui_MainWindow(object):
                     pickle.dump(self.index, objfile)
             except IOError:
                 pass
+        try:
+            with open(self.config_file, "w") as objf:
+                pickle.dump(self.cfg, objf)
+        except IOError, why:
+            print "Error with config.cfg :", why
         QtCore.QCoreApplication.processEvents()
         time.sleep(0.1)
         sys.exit()
+
 
     def select_video(self, new, old):
         """Select an item in selected video list.
@@ -311,7 +318,7 @@ class Ui_MainWindow(object):
 
         liststore = [[title, date, url movie, url thumbnail], [], ...]
         """
-        print "Populate ..."
+        #print "Populate ..."
         self.editor.append("    Lecture des contenus ...")
         if os.path.isfile(self.thumb_folder + "/index"):
             # Load index of pitchs
@@ -346,7 +353,6 @@ class Ui_MainWindow(object):
 
 
     def next_thumbnail(self, thumb=None):
-        #print "len :", len(self.liststore), self.counter, thumb
         video_item = VideoItem(self.liststore[self.counter])
         if thumb == None:
             shutil.copy("image.jpg", self.thumb)
@@ -372,7 +378,6 @@ class Ui_MainWindow(object):
             self.thumb = os.path.join(self.thumb_folder, 
                                     self.liststore[self.counter][1] + ".jpg")
             if not os.path.isfile(self.thumb):
-                #print "No thumb"
                 img_ldr = ImageLoader(self, self.liststore[self.counter][3])
                 img_ldr.start()
             else:
@@ -407,7 +412,6 @@ class Ui_MainWindow(object):
 
 
     def show_pitch(self):
-        #print "select:", self.preview.selectedItems()
         dureeRE = re.compile('[^0-9]*([0-9]+)(mn|min)')
         idx = self.items.index(self.preview.selectedItems()[0])
         self.editor.clear()
@@ -438,7 +442,6 @@ class Ui_MainWindow(object):
                 datas = (data_resume, time)
                 self.index[self.liststore[idx][1]] = datas
 
-            #print "data_resume :", data_resume
             self.videos[idx].pitch = datas[0]
             self.videos[idx].time = datas[1]
 
@@ -471,7 +474,6 @@ class Ui_MainWindow(object):
                                        str : error
         """
         if state == 1:
-            print self.list_dwnld.lst_movies
             title = self.list_dwnld.item(0).text()
             title.replace("\n", "")
             self.editor.append(u"Téléchargement de " + title + " ....")            
@@ -590,7 +592,7 @@ class Ui_MainWindow(object):
 
 
     def cancel(self):
-        print "Cancel"
+        #print "Cancel"
         self.arte.abort_dwnld = True
         self.stop = True
         return
@@ -633,6 +635,10 @@ class Ui_MainWindow(object):
         self.remove_btn.setEnabled(b)
         self.up_btn.setEnabled(b)
         self.down_btn.setEnabled(b)
+
+    def cleaning(self):
+        clean = Cleaner(self)
+        clean.start()
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", 
@@ -678,9 +684,10 @@ class Ui_MainWindow(object):
 
 
 class Preview(QtGui.QListWidget):
-    def __init__(self, ui, parent=None):
+    def __init__(self, ui, mw, parent=None):
         super(Preview, self).__init__(parent)
         self.ui = ui
+        self.mw = mw
         self.setStyleSheet("QWidget {color: white; background: black}")
         self.setDragEnabled(True)
         self.setDragDropMode(QtGui.QAbstractItemView.DragDrop)
@@ -748,8 +755,14 @@ class Preview(QtGui.QListWidget):
     def resizeEvent(self, event):
         s = self.spacing()
         self.setSpacing(s)
-        self.updateGeometries() 
-        event.accept()
+        self.updateGeometries()
+        w, h = self.mw.size().width(), self.mw.size().height()
+        try:
+            # At launching ui.cfg don't exist
+            self.ui.cfg["size"] = (w, h)
+        except:
+            pass
+        event.ignore()
 
 
 
@@ -887,6 +900,51 @@ class MovieLoader(Thread):
             if self.ui.stop:
                 break
             time.sleep(2)
+
+class Cleaner(Thread):
+    """Cleaner for thumbnail folder and file index.
+
+    """
+    def __init__(self, ui,):
+        self.thumb = ui.thumb_folder
+        self.limit = time.mktime(time.localtime()) - (7 * 24 * 60 * 60)
+        self.month = ["jan.", "fev.", "mar.", "avr.", "mai", "jui.", "juil.", "aout", "sep.", "oct.", "nov.", "dec."]
+        Thread.__init__(self)
+
+    def run(self):
+        x = 0
+        fl = os.path.join(self.thumb, "index")
+        try:
+            with open(fl, "r") as objf:
+                dindex = pickle.load(objf)
+        except:
+            dindex = {}
+        dk = dindex.keys()
+        for t in os.listdir(self.thumb):
+            if t == "index":
+                continue
+            date = os.path.splitext(t)[0]
+            lst = date.split(" ")
+            lst[1] = self.month.index(lst[1]) + 1
+            lst[2] = lst[2][:-1]
+            hm = lst.pop(3)
+            lhm = hm.split("h")
+            lst.append(lhm[0])
+            lst.append(lhm[1])
+            dt = " ".join([str(i) for i in lst])
+            stt =  time.strptime(dt, "%Y %m %d %H %M")
+            since_epoch = time.mktime(stt)
+            if since_epoch < self.limit:
+                if date in dk:
+                    del dindex[date]   
+                os.remove(os.path.join(self.thumb, t))
+                x += 1
+        try:
+            with open(fl, "w") as objf:
+                pickle.dump(dindex, objf)
+        except Exception, why:
+            print "Error in cleaner :", why
+        
 
 if __name__ == "__main__":
     import sys
