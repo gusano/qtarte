@@ -5,18 +5,12 @@
 import sys
 import os, subprocess, shutil, select
 import signal
-#import gtk
-import gobject
-import gtk.glade
 import re
 import urllib2, xml.dom.minidom
 import pynotify 
-import ConfigParser
 import locale
 import gettext
-import pygtk
 import BeautifulSoup as BS
-pygtk.require('2.0')
 
 from Catalog import Catalog, unescape_html, get_lang
 from arteNew import*
@@ -130,20 +124,10 @@ class Arte7(object):
         self.p_signal = ProgressSignal()
         self.p_signal.bind(ui)
 
-        #self.dirconf = os.path.expanduser('~') + '/.arteplus7'
+
         self.c_dir = os.getcwd()
         self.dirconf = self.c_dir 
-        #self.config = ConfigParser.RawConfigParser()
-        #if not os.path.isdir(self.dirconf):
-            #os.mkdir(self.dirconf)
-            #self.first = 'yes'
-        #self.fileconf = os.path.join(self.c_dir, 'config.cfg')
-        #if not os.path.isfile(self.fileconf):
-            #if not self.set_options(self.fileconf):
-                #return
 
-        #self.config.read(self.fileconf)
-        #self.directory = self.config.get('Repertoire', 'dir')
         while 1:
             if not ui.cfg["folder"]:
                 ui.set_settings()
@@ -154,8 +138,7 @@ class Arte7(object):
             os.mkdir(self.directory)
 
     def notify(self, n_signal):
-        #img_uri = "/usr/share/pixmaps/arte-icon.png"
-        img_uri = "medias/icon.png"        
+        img_uri = os.path.join(os.getcwd(), "medias/icon.png")
         pynotify.init("Arte+7 Recorder")
         notification = pynotify.Notification(self.nom_emi, "Download complete", img_uri)
         notification.show()

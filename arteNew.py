@@ -5,7 +5,7 @@
 # Date: Mon Oct  4 2010     
 # Author : Vincent Vande Vyvre <vins@swing.be>
 # Version : 0.1
-# Revision : 4
+# Revision : 7
 #
 # Graphical user's interface for Arte7Recorder version Qt
 #
@@ -138,6 +138,7 @@ class Ui_MainWindow(object):
                                     .hasHeightForWidth())
         self.save_pitch_btn.setSizePolicy(sizePolicy)
         self.save_pitch_btn.setText("Save text")
+        self.save_pitch_btn.setEnabled(False)
         self.verticalLayout.addWidget(self.save_pitch_btn)
         self.fake_btn = QtGui.QToolButton(self.dockWidgetContents)
         self.fake_btn.hide()
@@ -203,6 +204,8 @@ class Ui_MainWindow(object):
         self.set_buttons(False)
         self.add_btn.setEnabled(False)
         self.active_download = False
+        self.pitch = []
+
         self.thumb_folder = os.path.join(os.getcwd(), "thumbnails")
         if not os.path.isdir(self.thumb_folder):
             os.mkdir(self.thumb_folder)
@@ -242,9 +245,10 @@ class Ui_MainWindow(object):
             mssg.addButton(qut, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
             reply = mssg.exec_()
+            print reply
             if reply == 0:
                 if event:
-                    event.accept()
+                    event.ignore()
                     return
             self.cancel()
             time.sleep(1)
@@ -292,7 +296,6 @@ class Ui_MainWindow(object):
         Keyword arguments:
         item -- item double-clicked
         """
-        #print "Item :", item
         idx = self.items.index(item)
         self.list_dwnld.add_object(idx)
 
@@ -311,7 +314,6 @@ class Ui_MainWindow(object):
         self.preview.setStyleSheet(style)
         self.preview.setIconSize(QtCore.QSize(self.cfg["thumb1"], self.cfg["thumb1"]))
         self.list_dwnld.setIconSize(QtCore.QSize(self.cfg["thumb2"], self.cfg["thumb2"]))
-        #QtCore.QSize(160, 160))
 
     def populate(self):
         """Show available movies in preview window.
@@ -344,7 +346,6 @@ class Ui_MainWindow(object):
         item = self.liststore[0]
         self.thumb = os.path.join(self.thumb_folder, item[1] + ".jpg")
         if not os.path.isfile(self.thumb):
-            #print "No thumb"
             img_ldr = ImageLoader(self, item[3])
             img_ldr.start()
         else:
@@ -368,7 +369,7 @@ class Ui_MainWindow(object):
         item.setText(text)
         item.setTextAlignment(QtCore.Qt.AlignHCenter)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        item.setToolTip(u"Right click for show the pitch.")
+        item.setToolTip(u"Right click for show the summary.")
         QtCore.QCoreApplication.processEvents()
         self.items.append(item)
         self.videos.append(video_item)
@@ -412,6 +413,9 @@ class Ui_MainWindow(object):
 
 
     def show_pitch(self):
+        """Show the movie's summary.
+
+        """
         dureeRE = re.compile('[^0-9]*([0-9]+)(mn|min)')
         idx = self.items.index(self.preview.selectedItems()[0])
         self.editor.clear()
@@ -422,7 +426,7 @@ class Ui_MainWindow(object):
                 datas = self.index[self.liststore[idx][1]]
             except KeyError:
                 page = urllib2.urlopen(self.liststore[idx][2]).read()
-                soup = BS.BeautifulSoup( page )
+                soup = BS.BeautifulSoup(page)
                 base_node = soup.find('div', {"class":"recentTracksCont"})
                 data_resume = u""
 
@@ -463,6 +467,57 @@ class Ui_MainWindow(object):
         # Need to return False for drag and drop
         return False
 
+    def add_pitch(self, idx):
+        """Add the summary of selected movie for download.
+
+        Called when a movie is added in the basket.
+        """
+        if self.cfg["pitch"]:
+            self.pitch.append(self.create_summary(idx))
+        else:
+            self.save_pitch_btn.setEnabled(True)
+
+
+    def create_summary(self, idx):
+        """Format the pitch of a movie.
+
+        format:
+        Title       Duration
+            Summary
+            ...
+
+        Keyword arguments:
+        idx -- index of movie
+        
+        Return formated text
+        """
+        chain = "".join([self.videos[idx].title, "    ", self.videos[idx].time,
+                        " min.\n"])
+        pitch = self.videos[idx].pitch
+        if not pitch:
+            summary = "\tPas de description."
+        elif len(pitch) < 85:
+            summary = "\t" + pitch + "\n"
+        else:
+            summary = "\t "
+            while 1:
+                sl = pitch[:85]
+                count = len(sl)-1
+                while 1:
+                    if sl[count] == " ":
+                        break
+                    count -= 1
+                    if count == 0:
+                        count = len(sl)-1
+                        break
+                summary = summary + sl[:count] + "\n\t"
+                pitch = pitch[count:]
+                if len(pitch) < 85:
+                    summary = summary + pitch + "\n\t"
+                    break
+            summary = summary[:-2]
+        return chain + summary
+
 
     def download_notify(self, state):
         """Print, in the text editor, the download status.
@@ -484,6 +539,8 @@ class Ui_MainWindow(object):
             del item
             self.editor.insertPlainText(u" terminé.")
             self.active_download = False
+            if self.cfg["pitch"]:
+                self.save_pitch()
         elif state == 3:
             self.editor.insertPlainText(u" interrompu.")
             self.editor.append(u"Téléchargements annulés.")
@@ -492,11 +549,56 @@ class Ui_MainWindow(object):
             self.editor.insert(u" échec. Cause : " + state)
             self.active_download = False
         
+
     def progress_notify(self, val):
         """Update progress bar
 
         """
         self.prog_bar.setValue(val)
+
+
+    def save_pitch(self, sel=None):
+        f = os.path.join(self.cfg["folder"], "index")
+        if sel:
+            p = self.create_summary(sel)
+        else:
+            if not self.pitch:
+                return
+            p = self.pitch.pop(0)
+        try:
+            with open(f, "a") as objf:
+                objf.write(p)
+        except Exception, why:
+            print "Error :", why
+        self.save_pitch_btn.setEnabled(False)
+
+
+    def is_exist(self, idx):
+        """Verify if a selected movie is already in destination's folder.
+
+        Keyword arguments:
+        idx -- index of movie
+
+        Return:
+        False if movie must be rewrite, otherwise True
+        """
+        name = self.videos[idx].title + "-" + self.videos[idx].date + '.flv'
+        name = name.replace("/", "-")
+        if name in os.listdir(self.cfg["folder"]):
+            mssg = QtGui.QMessageBox()
+            mssg.setIcon(QtGui.QMessageBox.Question)
+            mssg.setText(u"Une vidéo du même nom existe déjà dans" 
+                        " le dossier de destination.")
+            mssg.setInformativeText(u"Désirez-vous la remplacer ?")
+            can = QtGui.QPushButton("Annuler")
+            mssg.addButton(can, QtGui.QMessageBox.ActionRole)
+            rmp = QtGui.QPushButton("Remplacer")
+            mssg.addButton(rmp, QtGui.QMessageBox.ActionRole)
+            mssg.setDefaultButton(can)
+            reply = mssg.exec_()
+            if reply == 0:
+                return True
+        return False
 
 
     #---------------------------------------
@@ -528,7 +630,12 @@ class Ui_MainWindow(object):
             item = self.list_dwnld.item(i)
             self.list_dwnld.takeItem(i)
             self.list_dwnld.lst_movies.pop(i)
+            try:
+                self.pitch.pop(i)
+            except:
+                pass
             del item
+
 
     def print_list(self):
         """Debug function"""
@@ -555,7 +662,9 @@ class Ui_MainWindow(object):
             self.list_dwnld.insertItem(r-1, item)             
             self.list_dwnld.lst_movies.insert(r-1, 
                                     self.list_dwnld.lst_movies.pop(r))
+            self.pitch.insert(r-1, self.pitch.pop(r))
             item.setSelected(True)
+
 
     def move_down(self):
         #print "Move down"
@@ -574,15 +683,18 @@ class Ui_MainWindow(object):
             item = self.list_dwnld.item(r)
             self.list_dwnld.takeItem(r)
             self.list_dwnld.insertItem(r+1, item)             
-            self.list_dwnld.lst_movies.insert(r+1, self.list_dwnld.lst_movies.pop(r))
+            self.list_dwnld.lst_movies.insert(r+1, 
+                                    self.list_dwnld.lst_movies.pop(r))
+            self.pitch.insert(r+1, self.pitch.pop(r))
             item.setSelected(True)
 
 
     def download(self):
-        print "Download"
+        #print "Download"
         #liststore = [[title, date, url movie, url thumbnail], [], ...]
         self.downloads = []
         self.list_dwnld.clearSelection()
+        self.editor.clear()
         for i in self.list_dwnld.lst_movies:
             for j in self.liststore:
                 if i == j[2]:
@@ -599,10 +711,17 @@ class Ui_MainWindow(object):
 
 
     def record_pitch(self):
-        print "Save texte"
+        #print "Save texte"
+        l = self.preview.selectedItems()
+        if not l:
+            return
+        idx = self.items.index(l[0])
+        self.save_pitch(idx)
+        self.save_pitch_btn.setEnabled(False)
 
     def reconnect(self):
         self.arte.refresh()
+
 
     def set_settings(self):
         Dialog = QtGui.QDialog()
@@ -723,6 +842,7 @@ class Preview(QtGui.QListWidget):
         self.startDrag(event)
         event.accept()
 
+
     def mousePressEvent(self, event):
         if not self.itemAt(event.pos()):
             self.clearSelection()
@@ -818,9 +938,14 @@ class ListDwnld(QtGui.QListWidget):
         self.add_object(data.text())
         event.accept()
 
+
     def add_object(self, item):
         #print "Item : ", item, type(item)
         idx = eval(str(item))
+        self.ui.show_pitch()
+        if self.ui.is_exist(idx):
+            self.ui.preview.clearSelection()
+            return
         img = self.ui.videos[idx].pixmap
         text = self.ui.set_thumbnail_text(self.ui.videos[idx].title)
         pix = img.scaled(100, 100, QtCore.Qt.KeepAspectRatio, 
@@ -831,7 +956,7 @@ class ListDwnld(QtGui.QListWidget):
         item.setTextAlignment(QtCore.Qt.AlignHCenter)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
         self.lst_movies.append(self.ui.videos[idx].url)
-        #print "File added :", ui.videos[idx].url
+        self.ui.add_pitch(idx)
 
 
 class VideoItem(QtCore.QObject):

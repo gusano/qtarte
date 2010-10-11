@@ -2,7 +2,7 @@
 **************  arteNew  *************************
 
 Version : testing
-Revision : 5
+Revision : 7
 Statut : uncomplete, stable
 Date : oct 10 2010
 Author : Vincent Vande Vyvre <vins@swing.be>
@@ -41,13 +41,20 @@ USAGE
 TODO
 ====
 
-    Save the pitch of all movies downloaded.
+    To present thumbnails in a nicely frame, no?
     Translate to french and german 
     ...
     (Your ideas hier)
 
 REVISION NOTES
 ==============
+#   7   oct 11 2010     - Saving summary of movies downloaded is implemented
+                        - Verify if a movie is already exist in destination folder
+                        - Bug fix : in close event, if a downloading is in progress
+                          after the warning dialog box the application may crash. Fixed
+
+                        - Some minor change and cleaning code
+
 #   6   oct 10 2010     - Implementation of a cleaner for the folder of thumbnails
                           and the file index
                         - Add the size of window in config.cfg
