@@ -1,13 +1,13 @@
 
 **************  arteNew  *************************
 
-Version : testing
-Revision : 7
-Statut : uncomplete, stable
-Date : oct 10 2010
+Version : 0.1
+Revision : 8
+Statut : mature, stable
+Date : oct 12 2010
 Author : Vincent Vande Vyvre <vins@swing.be>
 Language : English
-Translated : To do
+Translated : French
 
 URL OF PROJECT
 ==============
@@ -36,18 +36,23 @@ USAGE
 =====
 
     Extract the archive in your home.
-    Open a shell in this folder and enter :  python arte7.py
+    Open a shell in this folder and enter :  python arte7recorder.py
 
 TODO
 ====
 
-    To present thumbnails in a nicely frame, no?
-    Translate to french and german 
+    Translate to german 
     ...
     (Your ideas hier)
 
 REVISION NOTES
 ==============
+#   8   oct 12 2010     - French translate
+                        - Support of connection's errors
+                        - Thumbnails are now nicely framed
+                        - Names of movies are now formated
+                        - minor bugs fix
+
 #   7   oct 11 2010     - Saving summary of movies downloaded is implemented
                         - Verify if a movie is already exist in destination folder
                         - Bug fix : in close event, if a downloading is in progress

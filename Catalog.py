@@ -5,7 +5,7 @@ import os, re
 import time
 import urllib2, xml.dom.minidom
 import sys
-import gconf
+#import gconf
 import BeautifulSoup as BS
 
 def unescape_html(text):
@@ -67,18 +67,29 @@ class Catalog:
   def __init__(self):
     lang = "/%s/" % get_lang()
     max_video_displayed = 200 #Maximum number of videos to display
+    self.error = False
     try:
-        base_page_url = self.ARTE_WEB_ROOT + lang + "videos/" #we first load the page in order to get the page url with the correct index
+        base_page_url = self.ARTE_WEB_ROOT + lang + "videos/" 
+        #we first load the page in order to get the page url 
+        #with the correct index
         html_content = urllib2.urlopen( base_page_url ).read() 
         soup = BS.BeautifulSoup( html_content )
         
         found_url = 0
-        for j in soup.findAll('script'): #we will look for the script in the page that has the url with the correct index
+        for j in soup.findAll('script'): 
+            #we will look for the script in the page that has the url 
+            #with the correct index
             for text in j:
-                if "videowallSettings" in text: #when the script is found, we will collect the url
+                if "videowallSettings" in text: 
+                    #when the script is found, we will collect the url
                     for word in text.split():
-                        if "asThumbnail" in word: #there are 4 different urls, we want the one that displays thumbnails
-                            base_page_url = self.ARTE_WEB_ROOT + word.replace('"','')  + "?hash=" + lang.replace('/','') + "/thumb///1/" + str(max_video_displayed) + "/"
+                        if "asThumbnail" in word: 
+                            #there are 4 different urls, we want the one 
+                            #that displays thumbnails
+                            base_page_url = self.ARTE_WEB_ROOT + \
+                                        word.replace('"','')  + "?hash=" + \
+                                        lang.replace('/','') + "/thumb///1/"\
+                                        + str(max_video_displayed) + "/"
                             found_url = 1
                             break
                 if found_url:
@@ -101,19 +112,21 @@ class Catalog:
                     if p['class'] == 'teaserText':
                         video['summary'] = p.string
                 else:
-                    if p.string != "" and not p.string.endswith("vues") and not p.string.endswith("Aufrufe"):
+                    if p.string != "" and not p.string.endswith("vues") \
+                                        and not p.string.endswith("Aufrufe"):
                         video['startDate'] = parse_date( p.string )
             #get thumbnail image:
             for t in i.findAll( 'img', {"class":"thumbnail"}):
                 #print t
                 video['previewPictureURL'] = self.ARTE_WEB_ROOT + t['src']
-                video['previewPictureURL'] = video['previewPictureURL'].replace("/fr/", lang)
+                video['previewPictureURL'] = video['previewPictureURL']\
+                                        .replace("/fr/", lang)
             #print video
-            #exit(0)
             self.videos.append(video)
             #break
+        
+    except Exception, why:
+        self.error = why
 
-    except IOError:
-        print _("There are problem with your internet connection")
-        sys.exit(0)
+
 

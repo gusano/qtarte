@@ -13,7 +13,7 @@ import gettext
 import BeautifulSoup as BS
 
 from Catalog import Catalog, unescape_html, get_lang
-from arteNew import*
+from arte7_ui import*
 
 from PyQt4 import QtCore, QtGui
 
@@ -151,12 +151,6 @@ class Arte7(object):
         return True
 
 
-    def refresh(self):
-        ui.editor.setText(u"\n\n    Connection à  http://arte7.arte.tv ...")
-        make_connection()
-        ui.populate()
-
-
     #Download
     def on_telecharge(self, movies):
         n_signal = NotifySignal()
@@ -199,7 +193,7 @@ class Arte7(object):
 class NotifySignal(QtCore.QObject):
     """Signal used by on_telecharge function.
 
-    This signal is used by telechage when a downloading of 
+    This signal is used by telecharge when a downloading of 
     movie is completed.
     """
     loadFinished = QtCore.pyqtSignal()
@@ -236,19 +230,30 @@ class ProgressSignal(QtCore.QObject):
 
 def make_connection():
     catalog = Catalog()
-    try:
-        with open('database', 'w') as datalist:
-            datalist.write('\n'.join(['%s;%s;%s;%s' % (video[Catalog.TITLE_TAG], 
-                                video[Catalog.DATE_TAG], video[Catalog.URL_TAG], 
-                                video[Catalog.IMAGE_TAG]) 
-                                for video in catalog.videos]))
-    except IOError, why:
-        reply = ui.on_error_data(why)
-        sys.exit()
+    if catalog.error:
+        ui.on_error_data(catalog.error)
+    else:
+        try:
+            with open('database', 'w') as datalist:
+                datalist.write('\n'.join(['%s;%s;%s;%s' % (video[Catalog.TITLE_TAG], 
+                                    video[Catalog.DATE_TAG], video[Catalog.URL_TAG], 
+                                    video[Catalog.IMAGE_TAG]) 
+                                    for video in catalog.videos]))
+        except IOError, why:
+            ui.on_error_data(why)
+
 
 
 if __name__ == "__main__":
     app = QtGui.QApplication(sys.argv)
+    ## Translation process
+    loc = QtCore.QLocale.system().name()
+    qtTranslator = QtCore.QTranslator()
+    if qtTranslator.load("qt_" + loc):
+        app.installTranslator(qtTranslator)
+    appTranslator = QtCore.QTranslator()
+    if appTranslator.load("arte7recorder_" + loc):
+        app.installTranslator(appTranslator)
     MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)

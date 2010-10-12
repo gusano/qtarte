@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'arte7_gui.ui'
+# setting.py
 #
-# Created: Sun Oct 10 11:53:26 2010
-#      by: PyQt4 UI code generator 4.7.2
+# Date: Mon Oct  10 2010     
+# Author : Vincent Vande Vyvre <vins@swing.be>
 #
-# WARNING! All changes made in this file will be lost!
+# Option dialog box for Arte7Recorder version Qt
+#
+# arte7recorder : https://launchpad.net/~arte+7recorder
+# qtarte : https://code.launchpad.net/~arte+7recorder/+junk/qtarte
+#
 
 import os
 import sys
@@ -175,28 +179,28 @@ class Setting(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", 
-                                "Dialog", None, 
+                                "arte7recorder", None, 
                                 QtGui.QApplication.UnicodeUTF8))
         self.title_fr.setText(QtGui.QApplication.translate("Dialog", 
-                                "Préferences", None, 
+                                "Settings", None, 
                                 QtGui.QApplication.UnicodeUTF8))
         self.folder_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Dossier videos :", None, 
+                                "Videos folder :", None, 
                                 QtGui.QApplication.UnicodeUTF8))
         self.browse_btn.setText(QtGui.QApplication.translate("Dialog", 
-                                "Parcourir", None, 
+                                "Browser", None, 
                                 QtGui.QApplication.UnicodeUTF8))
         self.pitch_chb.setText(QtGui.QApplication.translate("Dialog",   
-                                "Enregistrer automatiquement les résumés.", 
+                                "To record the summaries automatically.", 
                                 None, QtGui.QApplication.UnicodeUTF8))
         self.bckgrnd_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Couleur de la fenêtre d\'apeçu :", None, 
+                                "Background color :", None, 
                                 QtGui.QApplication.UnicodeUTF8))
         self.thumb1_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Taille des vignettes d\'aperçu :", None, 
+                                "Size of preview's thumbnails :", None, 
                                 QtGui.QApplication.UnicodeUTF8))
         self.thumb2_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Taille des vignettes du panier :", None, 
+                                "Size of basket's thumbnails :", None, 
                                 QtGui.QApplication.UnicodeUTF8))
 
 

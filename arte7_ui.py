@@ -1,18 +1,33 @@
 # -*- coding: utf-8 -*-
 
-# arteNew.py
+# arte7_ui.py
 #
 # Date: Mon Oct  4 2010     
 # Author : Vincent Vande Vyvre <vins@swing.be>
 # Version : 0.1
-# Revision : 7
+# Revision : 8
 #
 # Graphical user's interface for Arte7Recorder version Qt
 #
 # arte7recorder : https://launchpad.net/~arte+7recorder
 # qtarte : https://code.launchpad.net/~arte+7recorder/+junk/qtarte
 #
-# Warning : Use this script only for testing
+# Copyright: 2009-2010 Vincent Vande Vyvre
+# Licence: LGPL3
+#
+#
+# arte7_ui is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# arte7_ui is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with arte7_ui.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
@@ -34,7 +49,7 @@ from PyQt4 import QtCore, QtGui
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(900, 700)
+        MainWindow.resize(1100, 700)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.splitter = QtGui.QSplitter(self.centralwidget)
@@ -114,7 +129,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.download_btn.sizePolicy()
                                     .hasHeightForWidth())
         self.download_btn.setSizePolicy(sizePolicy)
-        self.download_btn.setText("Download")
+        self.download_btn.setText(QtGui.QApplication.translate("MainWindow", 
+                        "Download", None, QtGui.QApplication.UnicodeUTF8))
         self.verticalLayout.addWidget(self.download_btn)
         self.prog_bar = QtGui.QProgressBar(self.dockWidgetContents)
         self.prog_bar.setProperty("value", 0)
@@ -127,7 +143,8 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.cancel_btn.sizePolicy()
                                     .hasHeightForWidth())
         self.cancel_btn.setSizePolicy(sizePolicy)
-        self.cancel_btn.setText("Cancel")
+        self.cancel_btn.setText(QtGui.QApplication.translate("MainWindow", 
+                        "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.verticalLayout.addWidget(self.cancel_btn)
         self.save_pitch_btn = QtGui.QToolButton(self.dockWidgetContents)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, 
@@ -137,8 +154,24 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.save_pitch_btn.sizePolicy()
                                     .hasHeightForWidth())
         self.save_pitch_btn.setSizePolicy(sizePolicy)
-        self.save_pitch_btn.setText("Save text")
-        self.save_pitch_btn.setEnabled(False)
+        self.save_pitch_btn.setText(QtGui.QApplication.translate("MainWindow", 
+                        "Save text", None, QtGui.QApplication.UnicodeUTF8))
+        self.save_pitch_btn.setEnabled(False)# Copyright: 2009-2010 Vincent Vande Vyvre
+# Licence: LGPL3
+#
+#
+# Oqapy is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Oqapy is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Oqapy.  If not, see <http://www.gnu.org/licenses/>.
         self.verticalLayout.addWidget(self.save_pitch_btn)
         self.fake_btn = QtGui.QToolButton(self.dockWidgetContents)
         self.fake_btn.hide()
@@ -179,7 +212,9 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.show()
-        self.editor.append(u"\n\n    Connection à  http://arte7.arte.tv ...")
+        self.editor.append(QtGui.QApplication.translate("MainWindow", 
+                        "\n\n    Connection to  http://arte7.arte.tv ...", None, 
+                        QtGui.QApplication.UnicodeUTF8))
         QtCore.QCoreApplication.processEvents()
         MainWindow.closeEvent = self.closeEvent       
 
@@ -223,6 +258,7 @@ class Ui_MainWindow(object):
             MainWindow.resize(self.cfg["size"][0], self.cfg["size"][1])
         self.arte = None
         self.stop = False
+        self.fatal_error = False
         #self.prog_val = 0
         #self.populate()
 
@@ -237,11 +273,19 @@ class Ui_MainWindow(object):
         if self.active_download:
             mssg = QtGui.QMessageBox()
             mssg.setIcon(QtGui.QMessageBox.Question)
-            mssg.setText(u"Un téléchargement est en cours.")
-            mssg.setInformativeText(u"Désirez-vous interrompre le transfert ?")
-            can = QtGui.QPushButton("Annuler")
+            mssg.setText(QtGui.QApplication.translate("MainWindow", 
+                        "Downloading is not complete.", None, 
+                        QtGui.QApplication.UnicodeUTF8))
+            mssg.setInformativeText(QtGui.QApplication.translate("MainWindow", 
+                        "Do you want to stop the loading  ?", None, 
+                        QtGui.QApplication.UnicodeUTF8))
+            can = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
+                        "Cancel", None, 
+                        QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(can, QtGui.QMessageBox.ActionRole)
-            qut = QtGui.QPushButton("Quitter")
+            qut = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
+                        "Quit", None, 
+                        QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(qut, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
             reply = mssg.exec_()
@@ -312,8 +356,11 @@ class Ui_MainWindow(object):
         style = "".join(["QWidget {color: white; background: ", 
                                     self.colors[self.cfg["color"]], "}"])
         self.preview.setStyleSheet(style)
-        self.preview.setIconSize(QtCore.QSize(self.cfg["thumb1"], self.cfg["thumb1"]))
-        self.list_dwnld.setIconSize(QtCore.QSize(self.cfg["thumb2"], self.cfg["thumb2"]))
+        self.preview.setIconSize(QtCore.QSize(self.cfg["thumb1"], 
+                                    self.cfg["thumb1"]))
+        self.list_dwnld.setIconSize(QtCore.QSize(self.cfg["thumb2"], 
+                                    self.cfg["thumb2"]))
+
 
     def populate(self):
         """Show available movies in preview window.
@@ -321,7 +368,11 @@ class Ui_MainWindow(object):
         liststore = [[title, date, url movie, url thumbnail], [], ...]
         """
         #print "Populate ..."
-        self.editor.append("    Lecture des contenus ...")
+        if self.fatal_error:
+            return
+        self.editor.append(QtGui.QApplication.translate("MainWindow", 
+                        "    Reading contents ...", None, 
+                        QtGui.QApplication.UnicodeUTF8))
         if os.path.isfile(self.thumb_folder + "/index"):
             # Load index of pitchs
             try:
@@ -336,6 +387,7 @@ class Ui_MainWindow(object):
         self.sgl = Signal()
         self.sgl.bind(self)
         f = open ("database", "r")
+
         for line in f:
             t = line.split(";")
             t[0] = self.str_to_unicode(t[0])
@@ -345,6 +397,7 @@ class Ui_MainWindow(object):
         self.counter = 0
         item = self.liststore[0]
         self.thumb = os.path.join(self.thumb_folder, item[1] + ".jpg")
+
         if not os.path.isfile(self.thumb):
             img_ldr = ImageLoader(self, item[3])
             img_ldr.start()
@@ -354,22 +407,28 @@ class Ui_MainWindow(object):
 
 
     def next_thumbnail(self, thumb=None):
+        """Insert thumbnail in preview.
+
+        Keyword arguments:
+        thumb -- path of thumbnail
+        """
         video_item = VideoItem(self.liststore[self.counter])
+
         if thumb == None:
             shutil.copy("image.jpg", self.thumb)
  
-        img = QtGui.QPixmap(self.thumb)
-        pix = img.scaled(160, 160, QtCore.Qt.KeepAspectRatio, 
-                                QtCore.Qt.FastTransformation)
-        video_item.pixmap = pix
+        img = self.create_icon()
+        video_item.pixmap = img
         
         item = QtGui.QListWidgetItem(self.preview)
-        item.setIcon(QtGui.QIcon(pix))
+        item.setIcon(QtGui.QIcon(img))
         text = self.set_thumbnail_text(video_item.title)
         item.setText(text)
         item.setTextAlignment(QtCore.Qt.AlignHCenter)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        item.setToolTip(u"Right click for show the summary.")
+        item.setToolTip(QtGui.QApplication.translate("MainWindow", 
+                        "Right click for show the summary.", None, 
+                        QtGui.QApplication.UnicodeUTF8))
         QtCore.QCoreApplication.processEvents()
         self.items.append(item)
         self.videos.append(video_item)
@@ -388,19 +447,71 @@ class Ui_MainWindow(object):
             return True
 
 
+    def create_icon(self):
+        """Create the thumbnails for preview.
+
+        Thumbnails are painted on a background black and a white
+        frame is painted around the image.
+
+        Return:
+        thumbnail
+        """
+        img = QtGui.QPixmap(self.thumb)
+        w = float(QtCore.QSize.width(img.size()))
+        h = float(QtCore.QSize.height(img.size()))
+        #black border
+        brect = QtCore.QRect(0, 0, w+3, h+3)
+
+        bckgrnd = QtGui.QPixmap(QtCore.QSize(w+4, h+4))
+        bckgrnd.fill(QtGui.QColor(QtCore.Qt.black))
+        painter = QtGui.QPainter()
+        painter.begin(bckgrnd)
+        painter.setPen(QtGui.QPen(QtCore.Qt.white, 1,
+                                  QtCore.Qt.SolidLine, QtCore.Qt.RoundCap,
+                                  QtCore.Qt.MiterJoin))
+        painter.drawRect(brect)
+        rect = QtCore.QRect(2, 2, w, h)
+        #painting source (all, of course)
+        irect = QtCore.QRect(0.0, 0.0, w, h)
+        painter.drawPixmap(rect, img, irect)
+        painter.end()
+
+        return bckgrnd
+
 
     def set_thumbnail_text(self, txt):
         """Format the movie's title.
 
         Keyword argument :
         txt -- title (unicode)
+
+        Return:
+        Formated text
         """
-        f = txt
-        if len(txt) > 40:
-            f = "".join([txt[:21], "\n", txt[21:41], "\n", txt[41:]])
-        elif len(txt) > 20:
-            f = "".join([txt[:20], "\n", txt[20:]])
-        return f
+        if len(txt) < 21:
+            return txt
+
+        form = ""
+        while 1:
+            chain = txt[:21]
+            count = len(chain) - 1
+            while 1:
+                if chain[count] == " ":
+                    break
+                count -= 1
+                if count == 0:
+                    count = len(chain) - 1
+                    break
+            form = form + chain[:count] + "\n"
+            txt = txt[count+1:]
+            if not txt:
+                break
+            elif len(txt) < 21:
+                form = form + txt + "\n"
+                break
+        return form[:-1]
+
+
 
 
     def str_to_unicode(self, obj, encoding='utf-8'):
@@ -441,8 +552,10 @@ class Ui_MainWindow(object):
                             data_resume += "\n"
                     except:
                         pass
-
-                time = dureeRE.search(page).group(1)
+                try:
+                    time = dureeRE.search(page).group(1)
+                except:
+                    time = "0"
                 datas = (data_resume, time)
                 self.index[self.liststore[idx][1]] = datas
 
@@ -529,24 +642,34 @@ class Ui_MainWindow(object):
                                        str : error
         """
         if state == 1:
-            title = self.list_dwnld.item(0).text()
+            title = str(self.list_dwnld.item(0).text())
             title.replace("\n", "")
-            self.editor.append(u"Téléchargement de " + title + " ....")            
+            self.editor.append(QtGui.QApplication.translate("MainWindow", 
+                        "Downloading %s ...." % title, None, 
+                        QtGui.QApplication.UnicodeUTF8))             
         elif state == 2:
             item = self.list_dwnld.item(0)
             self.list_dwnld.takeItem(0)
             self.list_dwnld.lst_movies.pop(0)
             del item
-            self.editor.insertPlainText(u" terminé.")
+            self.editor.insertPlainText(QtGui.QApplication.translate
+                        ("MainWindow", "complete.", None, 
+                        QtGui.QApplication.UnicodeUTF8))
             self.active_download = False
             if self.cfg["pitch"]:
                 self.save_pitch()
         elif state == 3:
-            self.editor.insertPlainText(u" interrompu.")
-            self.editor.append(u"Téléchargements annulés.")
+            self.editor.insertPlainText(QtGui.QApplication.translate
+                        ("MainWindow", "Canceled", None, 
+                        QtGui.QApplication.UnicodeUTF8))
+            self.editor.append(QtGui.QApplication.translate("MainWindow", 
+                        "Downloading canceled.", None, 
+                        QtGui.QApplication.UnicodeUTF8))
             self.active_download = False
         elif isinstance(state, str):
-            self.editor.insert(u" échec. Cause : " + state)
+            self.editor.insert(QtGui.QApplication.translate("MainWindow", 
+                        "Stopped on error : %s", None, 
+                        QtGui.QApplication.UnicodeUTF8)) % state
             self.active_download = False
         
 
@@ -574,7 +697,7 @@ class Ui_MainWindow(object):
 
 
     def is_exist(self, idx):
-        """Verify if a selected movie is already in destination's folder.
+        """Verify if a selected movie is already exists in destination's folder.
 
         Keyword arguments:
         idx -- index of movie
@@ -587,12 +710,18 @@ class Ui_MainWindow(object):
         if name in os.listdir(self.cfg["folder"]):
             mssg = QtGui.QMessageBox()
             mssg.setIcon(QtGui.QMessageBox.Question)
-            mssg.setText(u"Une vidéo du même nom existe déjà dans" 
-                        " le dossier de destination.")
-            mssg.setInformativeText(u"Désirez-vous la remplacer ?")
-            can = QtGui.QPushButton("Annuler")
+            mssg.setText(QtGui.QApplication.translate("MainWindow", 
+                        "A video of the same name already exists in the" 
+                        " destination folder."
+                        , None, QtGui.QApplication.UnicodeUTF8))
+            mssg.setInformativeText(QtGui.QApplication.translate("MainWindow", 
+                        "Do you want to replace the existing video?", 
+                        None, QtGui.QApplication.UnicodeUTF8))
+            can = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
+                        "Cancel", None, QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(can, QtGui.QMessageBox.ActionRole)
-            rmp = QtGui.QPushButton("Remplacer")
+            rmp = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
+                        "Replace", None, QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(rmp, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
             reply = mssg.exec_()
@@ -739,7 +868,13 @@ class Ui_MainWindow(object):
 
     def on_error_data(self, msg):
         print "Error with database :", msg
-
+        self.fatal_error = True
+        self.editor.append(QtGui.QApplication.translate("MainWindow", 
+                        "Error : %s " % msg, None, 
+                        QtGui.QApplication.UnicodeUTF8))
+        self.editor.append(QtGui.QApplication.translate("MainWindow", 
+                        "Retry later." , None, 
+                        QtGui.QApplication.UnicodeUTF8))
 
     #---------------------------------------
     # Household tasks
@@ -761,7 +896,7 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", 
-                        "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+                        "Arte7recorder", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_Options.setTitle(QtGui.QApplication.translate("MainWindow", 
                         "&Options", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow", 
@@ -777,18 +912,18 @@ class Ui_MainWindow(object):
         self.up_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
                         "Move up.", None, QtGui.QApplication.UnicodeUTF8))
         self.down_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
-                        "move down", None, QtGui.QApplication.UnicodeUTF8))
+                        "Move down.", None, QtGui.QApplication.UnicodeUTF8))
         self.download_btn.setStatusTip(QtGui.QApplication.translate(
-                        "MainWindow", "Download now", None, 
+                        "MainWindow", "Download now.", None, 
                         QtGui.QApplication.UnicodeUTF8))
         self.cancel_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
-                        "Abort download", None, 
+                        "Abort download.", None, 
                         QtGui.QApplication.UnicodeUTF8))
         self.save_pitch_btn.setStatusTip(QtGui.QApplication.translate(
                         "MainWindow", "Save the pitch.", None, 
                         QtGui.QApplication.UnicodeUTF8))
         self.action_Settings.setText(QtGui.QApplication.translate("MainWindow", 
-                        "&Préferences", None, QtGui.QApplication.UnicodeUTF8))
+                        "&Options", None, QtGui.QApplication.UnicodeUTF8))
         self.action_Connection.setText(QtGui.QApplication.translate("MainWindow", 
                         "&Connection", None, QtGui.QApplication.UnicodeUTF8))
         self.action_About.setText(QtGui.QApplication.translate("MainWindow", 
@@ -1050,16 +1185,28 @@ class Cleaner(Thread):
                 continue
             date = os.path.splitext(t)[0]
             lst = date.split(" ")
-            lst[1] = self.month.index(lst[1]) + 1
-            lst[2] = lst[2][:-1]
-            hm = lst.pop(3)
-            lhm = hm.split("h")
-            lst.append(lhm[0])
-            lst.append(lhm[1])
-            dt = " ".join([str(i) for i in lst])
-            stt =  time.strptime(dt, "%Y %m %d %H %M")
-            since_epoch = time.mktime(stt)
-            if since_epoch < self.limit:
+            rem = False
+            try:
+                if lst[1][:2].isalpha():
+                    lst[1] = self.month.index(lst[1]) + 1
+                if lst[2][-1] == ",":
+                    lst[2] = lst[2][:-1]
+                else:
+                    print "False :", lst[2]
+                hm = lst.pop(3)
+                lhm = hm.split("h")
+                lst.append(lhm[0])
+                lst.append(lhm[1])
+                dt = " ".join([str(i) for i in lst])
+                stt =  time.strptime(dt, "%Y %m %d %H %M")
+                since_epoch = time.mktime(stt)
+                if since_epoch < self.limit:
+                    rem = True
+            except Exception, why:
+                # If date is not readable
+                rem = True
+
+            if rem:
                 if date in dk:
                     del dindex[date]   
                 os.remove(os.path.join(self.thumb, t))
