@@ -230,11 +230,12 @@ class ProgressSignal(QtCore.QObject):
 
 def make_connection():
     catalog = Catalog()
+    f = os.path.join(ui.user_folder, 'database')
     if catalog.error:
         ui.on_error_data(catalog.error)
     else:
         try:
-            with open('database', 'w') as datalist:
+            with open(f, 'w') as datalist:
                 datalist.write('\n'.join(['%s;%s;%s;%s' % (video[Catalog.TITLE_TAG], 
                                     video[Catalog.DATE_TAG], video[Catalog.URL_TAG], 
                                     video[Catalog.IMAGE_TAG]) 
@@ -245,6 +246,7 @@ def make_connection():
 
 
 if __name__ == "__main__":
+    cwd = os.path.split(sys.argv[0])[0]
     app = QtGui.QApplication(sys.argv)
     ## Translation process
     loc = QtCore.QLocale.system().name()
@@ -256,7 +258,7 @@ if __name__ == "__main__":
         app.installTranslator(appTranslator)
     MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow, cwd)
     make_connection()
     
     arte = Arte7()

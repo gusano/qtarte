@@ -5,7 +5,7 @@
 # Date: Mon Oct  4 2010     
 # Author : Vincent Vande Vyvre <vins@swing.be>
 # Version : 0.1
-# Revision : 8
+# Revision : 9
 #
 # Graphical user's interface for Arte7Recorder version Qt
 #
@@ -47,9 +47,10 @@ from setting import*
 from PyQt4 import QtCore, QtGui
 
 class Ui_MainWindow(object):
-    def setupUi(self, MainWindow):
+    def setupUi(self, MainWindow, cwd):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(1100, 700)
+        c_dir = os.getcwd()
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.splitter = QtGui.QSplitter(self.centralwidget)
@@ -98,25 +99,25 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.add_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("medias/add.png"), QtGui.QIcon.Normal, 
+        icon.addPixmap(QtGui.QPixmap(cwd + "/medias/add.png"), QtGui.QIcon.Normal, 
                                     QtGui.QIcon.Off)
         self.add_btn.setIcon(icon)
         self.horizontalLayout.addWidget(self.add_btn)
         self.remove_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("medias/remove.png"), QtGui.QIcon.Normal, 
+        icon1.addPixmap(QtGui.QPixmap(cwd + "/medias/remove.png"), QtGui.QIcon.Normal, 
                                     QtGui.QIcon.Off)
         self.remove_btn.setIcon(icon1)
         self.horizontalLayout.addWidget(self.remove_btn)
         self.up_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("medias/up.svg"), QtGui.QIcon.Normal, 
+        icon2.addPixmap(QtGui.QPixmap(cwd + "/medias/up.svg"), QtGui.QIcon.Normal, 
                                     QtGui.QIcon.Off)
         self.up_btn.setIcon(icon2)
         self.horizontalLayout.addWidget(self.up_btn)
         self.down_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("medias/down.svg"), QtGui.QIcon.Normal, 
+        icon3.addPixmap(QtGui.QPixmap(cwd + "/medias/down.svg"), QtGui.QIcon.Normal, 
                                     QtGui.QIcon.Off)
         self.down_btn.setIcon(icon3)
         self.horizontalLayout.addWidget(self.down_btn)
@@ -156,22 +157,7 @@ class Ui_MainWindow(object):
         self.save_pitch_btn.setSizePolicy(sizePolicy)
         self.save_pitch_btn.setText(QtGui.QApplication.translate("MainWindow", 
                         "Save text", None, QtGui.QApplication.UnicodeUTF8))
-        self.save_pitch_btn.setEnabled(False)# Copyright: 2009-2010 Vincent Vande Vyvre
-# Licence: LGPL3
-#
-#
-# Oqapy is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Oqapy is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Oqapy.  If not, see <http://www.gnu.org/licenses/>.
+        self.save_pitch_btn.setEnabled(False)
         self.verticalLayout.addWidget(self.save_pitch_btn)
         self.fake_btn = QtGui.QToolButton(self.dockWidgetContents)
         self.fake_btn.hide()
@@ -240,11 +226,13 @@ class Ui_MainWindow(object):
         self.add_btn.setEnabled(False)
         self.active_download = False
         self.pitch = []
-
-        self.thumb_folder = os.path.join(os.getcwd(), "thumbnails")
+        self.user_folder = os.path.join(os.path.expanduser("~"), ".arte7recorder-qt")
+        if not os.path.isdir(self.user_folder):
+            os.mkdir(self.user_folder)
+        self.thumb_folder = os.path.join(self.user_folder, "thumbnails")
         if not os.path.isdir(self.thumb_folder):
             os.mkdir(self.thumb_folder)
-        self.config_file = os.path.join(os.getcwd(), "config.cfg")
+        self.config_file = os.path.join(self.user_folder, "config.cfg")
         if not os.path.isfile(self.config_file):
             self.cfg = {"folder": "", "pitch": False, "color": 0, 
                             "thumb1": 160, "thumb2": 80, "size": (900, 700)}
@@ -347,7 +335,7 @@ class Ui_MainWindow(object):
 
     def update_gui(self):
         try:
-            with open("config.cfg", "r") as objf:
+            with open(self.config_file, "r") as objf:
                 c = pickle.load(objf)
         except:
             print "Fichier 'config.cfg' introuvable"
@@ -370,6 +358,7 @@ class Ui_MainWindow(object):
         #print "Populate ..."
         if self.fatal_error:
             return
+        f = os.path.join(self.user_folder, 'database')
         self.editor.append(QtGui.QApplication.translate("MainWindow", 
                         "    Reading contents ...", None, 
                         QtGui.QApplication.UnicodeUTF8))
@@ -386,7 +375,7 @@ class Ui_MainWindow(object):
         self.liststore = []
         self.sgl = Signal()
         self.sgl.bind(self)
-        f = open ("database", "r")
+        f = open (f, "r")
 
         for line in f:
             t = line.split(";")
@@ -399,7 +388,8 @@ class Ui_MainWindow(object):
         self.thumb = os.path.join(self.thumb_folder, item[1] + ".jpg")
 
         if not os.path.isfile(self.thumb):
-            img_ldr = ImageLoader(self, item[3])
+            fp = os.path.join(self.user_folder, "image.jpg")
+            img_ldr = ImageLoader(self, item[3], fp)
             img_ldr.start()
         else:
             self.next_thumbnail(self.thumb)
@@ -415,7 +405,7 @@ class Ui_MainWindow(object):
         video_item = VideoItem(self.liststore[self.counter])
 
         if thumb == None:
-            shutil.copy("image.jpg", self.thumb)
+            shutil.copy(os.path.join(self.user_folder, "image.jpg"), self.thumb)
  
         img = self.create_icon()
         video_item.pixmap = img
@@ -438,7 +428,8 @@ class Ui_MainWindow(object):
             self.thumb = os.path.join(self.thumb_folder, 
                                     self.liststore[self.counter][1] + ".jpg")
             if not os.path.isfile(self.thumb):
-                img_ldr = ImageLoader(self, self.liststore[self.counter][3])
+                fp = os.path.join(self.user_folder, "image.jpg")
+                img_ldr = ImageLoader(self, self.liststore[self.counter][3], fp)
                 img_ldr.start()
             else:
                 self.next_thumbnail(self.thumb)
@@ -1130,13 +1121,14 @@ class ImageLoader(Thread):
     """Thumbnail loader.
 
     """
-    def __init__(self, ui, url):
+    def __init__(self, ui, url, path):
         self.url = url
         self.ui = ui
+        self.path = path
         Thread.__init__(self)
 
     def run(self):
-        with open("image.jpg", 'wb') as objfile:
+        with open(self.path, 'wb') as objfile:
             f = urllib2.urlopen(self.url)
             objfile.write(f.read())
         self.ui.sgl.emit_signal()
@@ -1219,11 +1211,12 @@ class Cleaner(Thread):
         
 
 if __name__ == "__main__":
+    cwd = os.path.split(sys.argv[0])[0]
     import sys
     app = QtGui.QApplication(sys.argv)
     MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow)
+    ui.setupUi(MainWindow, cwd)
     
     sys.exit(app.exec_())
 

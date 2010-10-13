@@ -2,9 +2,9 @@
 **************  arteNew  *************************
 
 Version : 0.1
-Revision : 8
+Revision : 9
 Statut : mature, stable
-Date : oct 12 2010
+Date : oct 13 2010
 Author : Vincent Vande Vyvre <vins@swing.be>
 Language : English
 Translated : French
@@ -47,6 +47,8 @@ TODO
 
 REVISION NOTES
 ==============
+#   9   oct 13 2010     - Maintenance release.
+
 #   8   oct 12 2010     - French translate
                         - Support of connection's errors
                         - Thumbnails are now nicely framed
