@@ -18,7 +18,8 @@ import pickle
 from PyQt4 import QtCore, QtGui
 
 class Setting(object):
-    def setupUi(self, Dialog):
+    def setupUi(self, Dialog, path):
+        self.path = path
         Dialog.resize(464, 288)
         self.gridLayout_2 = QtGui.QGridLayout(Dialog)
         self.verticalLayout = QtGui.QVBoxLayout()
@@ -110,7 +111,7 @@ class Setting(object):
 
     def get_config(self):
         try:
-            with open("config.cfg", "r") as objf:
+            with open("self.path", "r") as objf:
                 self.cfg = pickle.load(objf)
         except:
             print "Fichier 'config.cfg' introuvable"
@@ -129,7 +130,7 @@ class Setting(object):
         self.cfg["thumb1"] = self.thumb1_spb.value()
         self.cfg["thumb2"] = self.thumb2_spb.value()
         try:
-            with open("config.cfg", "w") as objf:
+            with open(self.path, "w") as objf:
                 pickle.dump(self.cfg, objf)
         except Exception, why:
             print "Erreur de sauvegarde du fichier config.cfg :", why

@@ -846,7 +846,7 @@ class Ui_MainWindow(object):
     def set_settings(self):
         Dialog = QtGui.QDialog()
         sett = Setting()
-        sett.setupUi(Dialog)
+        sett.setupUi(Dialog, self.config_file)
         reply = Dialog.exec_()
         if reply == 1:
             self.update_gui()
