@@ -51,6 +51,9 @@ def rtmp_download( link, destination = "/dev/null", try_resume = True, resuming 
             else:
                 break
 
+    # Fix bug 603032
+    destination = destination.encode(sys.getfilesystemencoding(), 'ignore')
+
     cmd_dl = 'flvstreamer -r "%s" --flv "%s"' % (link, destination)
     cmd_resume = 'flvstreamer -r "%s" --resume --flv "%s"' % (link, destination)
     cmd_resume_skip = 'flvstreamer -r "%s" --resume --skip 1 --flv "%s"' % (link, destination)
