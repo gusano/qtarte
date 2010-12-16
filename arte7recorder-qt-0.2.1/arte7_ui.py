@@ -446,7 +446,7 @@ class Ui_MainWindow(object):
         Return:
         thumbnail
         """
-        img = QtGui.QPixmap(self.thumb)
+        img = QtGui.QPixmap(unicode(self.thumb))
         w = float(QtCore.QSize.width(img.size()))
         h = float(QtCore.QSize.height(img.size()))
         #black border
