@@ -7,15 +7,21 @@ This program allows recording [arte+7](http://videos.arte.tv) videos.
 
 #### Dependencies
 
- * python < 3
+ * python >= 2.7 (does not work with python3 yet)
  * PyQt >= 4.4
 
 #### Usage
 
  * `$ cd qtarte`
- * `$ python arte7recorder.py`
+ * `$ ./arte7recorder.py`
 
+Optionally you can pass a language option ("fr" or "de", default is "fr"):
 
+ * `$ ./arte7recorder.py -l de` or `$ ./arte7recorder.py --lang=de`
+
+Show help:
+
+ * `$ ./arte7recorder -h`
 
 ### old README below
 
