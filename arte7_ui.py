@@ -1136,7 +1136,7 @@ class MovieLoader(Thread):
 
 
     def run(self):
-        self.arte.on_telecharge(self.movies)
+        self.arte.on_download(self.movies)
         while 1:
             if self.ui.stop:
                 break

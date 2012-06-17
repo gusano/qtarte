@@ -166,7 +166,7 @@ class Arte7(object):
 
 
     #Download
-    def on_telecharge(self, movies):
+    def on_download(self, movies):
         n_signal = NotifySignal()
         n_signal.bind(ui)
         for n in movies:
@@ -205,9 +205,9 @@ class Arte7(object):
         ui.stop = True
 
 class NotifySignal(QtCore.QObject):
-    """Signal used by on_telecharge function.
+    """Signal used by on_download function.
 
-    This signal is used by telecharge when a downloading of
+    This signal is used by download when a downloading of
     movie is completed.
     """
     loadFinished = QtCore.pyqtSignal()
@@ -224,9 +224,9 @@ class NotifySignal(QtCore.QObject):
         self.ui.download_notify(self.value)
 
 class ProgressSignal(QtCore.QObject):
-    """Signal used by on_telecharge function.
+    """Signal used by on_download function.
 
-    This signal is used by telechage when a downloading of
+    This signal is used by download when a downloading of
     movie is completed.
     """
     loadProgress = QtCore.pyqtSignal()
