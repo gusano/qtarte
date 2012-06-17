@@ -182,9 +182,9 @@ class Arte7(object):
                             n_signal.emit_signal()
                             break
 
-            except (IOError, why):
-                print("Download error :", why)
-                n_signal.value = why
+            except IOError as e:
+                print("Download error :", e)
+                n_signal.value = e
                 n_signal.emit_signal()
 
             else:
@@ -243,8 +243,8 @@ def make_connection():
                                     video[Catalog.DATE_TAG], video[Catalog.URL_TAG],
                                     video[Catalog.IMAGE_TAG])
                                     for video in catalog.videos]))
-        except (IOError, why):
-            ui.on_error_data(why)
+        except IOError as e:
+            ui.on_error_data(e)
 
 
 

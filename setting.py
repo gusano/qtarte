@@ -132,8 +132,8 @@ class Setting(object):
         try:
             with open(self.path, "w") as objf:
                 pickle.dump(self.cfg, objf)
-        except (Exception, why):
-            print("Error while saving file config.cfg :", why)
+        except Exception as e:
+            print("Error while saving file config.cfg :", e)
         self.dialog.accept()
 
     def get_folder(self):

@@ -238,8 +238,8 @@ class Ui_MainWindow(object):
             try:
                 with open(self.config_file, "w") as objf:
                     pickle.dump(self.cfg, objf)
-            except (Exception, why):
-                print("Error while saving file config.cfg :", why)
+            except Exception as e:
+                print("Error while saving file config.cfg :", e)
         self.update_gui()
         if self.cfg.has_key("size"):
             MainWindow.resize(self.cfg["size"][0], self.cfg["size"][1])
@@ -293,8 +293,8 @@ class Ui_MainWindow(object):
         try:
             with open(self.config_file, "w") as objf:
                 pickle.dump(self.cfg, objf)
-        except (IOError, why):
-            print("Error with config.cfg :", why)
+        except IOError as e:
+            print("Error with config.cfg :", e)
         QtCore.QCoreApplication.processEvents()
         time.sleep(0.1)
         sys.exit()
@@ -680,8 +680,8 @@ class Ui_MainWindow(object):
         try:
             with open(f, "a") as objf:
                 objf.write(p)
-        except (Exception, why):
-            print("Error :", why)
+        except Exception as e:
+            print("Error :", e)
         self.save_pitch_btn.setEnabled(False)
 
 
@@ -1183,7 +1183,7 @@ class Cleaner(Thread):
                 since_epoch = time.mktime(stt)
                 if since_epoch < self.limit:
                     rem = True
-            except (Exception, why):
+            except Exception as e:
                 # If date is not readable
                 rem = True
 
@@ -1195,8 +1195,8 @@ class Cleaner(Thread):
         try:
             with open(fl, "w") as objf:
                 pickle.dump(dindex, objf)
-        except (Exception, why):
-            print("Error in cleaner :", why)
+        except Exception as e:
+            print("Error in cleaner :", e)
 
 
 if __name__ == "__main__":

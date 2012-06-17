@@ -125,5 +125,5 @@ class Catalog:
             self.videos.append(video)
             #break
 
-    except (Exception, why):
-        self.error = why
+    except Exception as e:
+        self.error = e
