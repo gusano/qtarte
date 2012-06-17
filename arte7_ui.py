@@ -97,7 +97,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.add_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon = QtGui.QIcon()
-        #print "medias :", cwd + "/medias/add.png", "CWD :", os.getcwd()
+        #print("medias :", cwd + "/medias/add.png", "CWD :", os.getcwd())
         icon.addPixmap(QtGui.QPixmap(cwd + "/medias/add.png"), QtGui.QIcon.Normal,
                                     QtGui.QIcon.Off)
         self.add_btn.setIcon(icon)
@@ -239,7 +239,7 @@ class Ui_MainWindow(object):
                 with open(self.config_file, "w") as objf:
                     pickle.dump(self.cfg, objf)
             except (Exception, why):
-                print "Erreur de sauvegarde du fichier config.cfg :", why
+                print("Error while saving file config.cfg :", why)
         self.update_gui()
         if self.cfg.has_key("size"):
             MainWindow.resize(self.cfg["size"][0], self.cfg["size"][1])
@@ -276,7 +276,7 @@ class Ui_MainWindow(object):
             mssg.addButton(qut, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
             reply = mssg.exec_()
-            print reply
+            print(reply)
             if reply == 0:
                 if event:
                     event.ignore()
@@ -294,7 +294,7 @@ class Ui_MainWindow(object):
             with open(self.config_file, "w") as objf:
                 pickle.dump(self.cfg, objf)
         except (IOError, why):
-            print "Error with config.cfg :", why
+            print("Error with config.cfg :", why)
         QtCore.QCoreApplication.processEvents()
         time.sleep(0.1)
         sys.exit()
@@ -337,7 +337,7 @@ class Ui_MainWindow(object):
             with open(self.config_file, "r") as objf:
                 c = pickle.load(objf)
         except:
-            print "Fichier 'config.cfg' introuvable"
+            print("Fichier 'config.cfg' introuvable")
         else:
             self.cfg = c
         #style = "".join(["QWidget {color: white; background: ",
@@ -354,7 +354,6 @@ class Ui_MainWindow(object):
 
         liststore = [[title, date, url movie, url thumbnail], [], ...]
         """
-        #print "Populate ..."
         if self.fatal_error:
             return
         f = os.path.join(self.user_folder, 'database')
@@ -682,7 +681,7 @@ class Ui_MainWindow(object):
             with open(f, "a") as objf:
                 objf.write(p)
         except (Exception, why):
-            print "Error :", why
+            print("Error :", why)
         self.save_pitch_btn.setEnabled(False)
 
 
@@ -725,7 +724,6 @@ class Ui_MainWindow(object):
     #---------------------------------------
 
     def add_video(self):
-        #print "Add video"
         try:
             idx = self.items.index(self.preview.selectedItems()[0])
             self.list_dwnld.add_object(idx)
@@ -734,7 +732,6 @@ class Ui_MainWindow(object):
 
 
     def remove_video(self):
-        #print "Remove"
         sel = self.list_dwnld.selectedItems()
         if self.active_download in sel:
             sel.remove(self.active_download)
@@ -759,12 +756,11 @@ class Ui_MainWindow(object):
     def print_list(self):
         """Debug function"""
         for i in self.list_dwnld.lst_movies:
-            print i
-        print "\n"
+            print(i)
+        print("\n")
 
 
     def move_up(self):
-        #print "Move up"
         sel = self.list_dwnld.selectedItems()
         if not sel:
             return
@@ -786,7 +782,6 @@ class Ui_MainWindow(object):
 
 
     def move_down(self):
-        #print "Move down"
         sel = self.list_dwnld.selectedItems()
         if not sel:
             return
@@ -809,7 +804,6 @@ class Ui_MainWindow(object):
 
 
     def download(self):
-        #print "Download"
         #liststore = [[title, date, url movie, url thumbnail], [], ...]
         self.downloads = []
         self.list_dwnld.clearSelection()
@@ -823,14 +817,12 @@ class Ui_MainWindow(object):
 
 
     def cancel(self):
-        #print "Cancel"
         self.arte.abort_dwnld = True
         self.stop = True
         return
 
 
     def record_pitch(self):
-        #print "Save texte"
         l = self.preview.selectedItems()
         if not l:
             return
@@ -857,7 +849,7 @@ class Ui_MainWindow(object):
     #---------------------------------------
 
     def on_error_data(self, msg):
-        print "Error with database :", msg
+        print("Error with database :", msg)
         self.fatal_error = True
         self.editor.append(QtGui.QApplication.translate("MainWindow",
                         "Error : %s " % msg, None,
@@ -945,7 +937,6 @@ class Preview(QtGui.QListWidget):
 
 
     def startDrag(self, event):
-        #print "Mouse press event"
         it = self.itemAt(event.pos())
         idx = self.ui.items.index(it)
         if not it:
@@ -1055,7 +1046,6 @@ class ListDwnld(QtGui.QListWidget):
 
 
     def dragLeaveEvent(self, event):
-        #print "Leave event"
         pass
 
 
@@ -1066,7 +1056,6 @@ class ListDwnld(QtGui.QListWidget):
 
 
     def add_object(self, item):
-        #print "Item : ", item, type(item)
         idx = eval(str(item))
         self.ui.show_pitch()
         if self.ui.is_exist(idx):
@@ -1184,7 +1173,7 @@ class Cleaner(Thread):
                 if lst[2][-1] == ",":
                     lst[2] = lst[2][:-1]
                 else:
-                    print "False :", lst[2]
+                    print("False :", lst[2])
                 hm = lst.pop(3)
                 lhm = hm.split("h")
                 lst.append(lhm[0])
@@ -1207,7 +1196,7 @@ class Cleaner(Thread):
             with open(fl, "w") as objf:
                 pickle.dump(dindex, objf)
         except (Exception, why):
-            print "Error in cleaner :", why
+            print("Error in cleaner :", why)
 
 
 if __name__ == "__main__":

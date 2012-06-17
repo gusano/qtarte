@@ -114,7 +114,7 @@ class Setting(object):
             with open(self.path, "r") as objf:
                 self.cfg = pickle.load(objf)
         except:
-            print "Fichier 'config.cfg' introuvable"
+            print("file 'config.cfg' not found")
             self.cfg = {}
         else:
             self.folder_edit.setText(self.cfg["folder"])
@@ -133,7 +133,7 @@ class Setting(object):
             with open(self.path, "w") as objf:
                 pickle.dump(self.cfg, objf)
         except (Exception, why):
-            print "Erreur de sauvegarde du fichier config.cfg :", why
+            print("Error while saving file config.cfg :", why)
         self.dialog.accept()
 
     def get_folder(self):

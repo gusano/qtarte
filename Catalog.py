@@ -40,7 +40,6 @@ def parse_date( date_str ):
                 month = "%02d" % (arr.index(array[1])+1)
         year = array[2]
         date_ = "%s %s %s" % (year, month, day)
-    #print date_ + ", " + time_
     return date_ + ", " + time_
 
 class Catalog:
@@ -69,22 +68,22 @@ class Catalog:
     max_video_displayed = 200 #Maximum number of videos to display
     self.error = False
     try:
-        base_page_url = self.ARTE_WEB_ROOT + lang + "videos/" 
-        #we first load the page in order to get the page url 
+        base_page_url = self.ARTE_WEB_ROOT + lang + "videos/"
+        #we first load the page in order to get the page url
         #with the correct index
-        html_content = urllib2.urlopen( base_page_url ).read() 
+        html_content = urllib2.urlopen( base_page_url ).read()
         soup = BS.BeautifulSoup( html_content )
 
         found_url = 0
-        for j in soup.findAll('script'): 
-            #we will look for the script in the page that has the url 
+        for j in soup.findAll('script'):
+            #we will look for the script in the page that has the url
             #with the correct index
             for text in j:
-                if "videowallSettings" in text: 
+                if "videowallSettings" in text:
                     #when the script is found, we will collect the url
                     for word in text.split():
-                        if "asThumbnail" in word: 
-                            #there are 4 different urls, we want the one 
+                        if "asThumbnail" in word:
+                            #there are 4 different urls, we want the one
                             #that displays thumbnails
                             base_page_url = self.ARTE_WEB_ROOT + \
                                         word.replace('"','')  + "?hash=" + \
@@ -100,7 +99,7 @@ class Catalog:
         html_content = urllib2.urlopen( base_page_url ).read()
         soup = BS.BeautifulSoup( html_content )
         for i in soup.findAll('div', {"class":"video"}):
-            #print "i.prettify", i.prettify()
+            #print("i.prettify", i.prettify())
             video = dict()
             for h in i.findAll('h2'):
                 for a in h.findAll('a'):
@@ -120,11 +119,9 @@ class Catalog:
                         video['startDate'] = parse_date( p.string )
             #get thumbnail image:
             for t in i.findAll( 'img', {"class":"thumbnail"}):
-                #print t
                 video['previewPictureURL'] = self.ARTE_WEB_ROOT + t['src']
                 video['previewPictureURL'] = video['previewPictureURL']\
                                         .replace("/fr/", lang)
-            #print video
             self.videos.append(video)
             #break
 
