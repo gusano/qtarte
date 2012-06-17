@@ -24,7 +24,9 @@ parser.add_argument('-l', '--lang', help='choosen language (default: fr)',
                     default='fr')
 
 args = parser.parse_args()
-
+if not args.lang in ['fr', 'de']:
+    print("\n\n\033[91mError: --lang option can only be 'de' or 'fr'\033[0m\n\n")
+    exit(1)
 
 subprocess_pid = None
 
