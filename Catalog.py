@@ -55,7 +55,7 @@ class Catalog:
   MMS_TAG = 'mmsURL'
   RESUME_TAG = 'resume'
   IMAGE_TAG = 'previewPictureURL'
-  
+
   # Contenu du catalogue
   videos = []
   # Expressions régulières utilisée pour la recherche dans les pages web
@@ -74,7 +74,7 @@ class Catalog:
         #with the correct index
         html_content = urllib2.urlopen( base_page_url ).read() 
         soup = BS.BeautifulSoup( html_content )
-        
+
         found_url = 0
         for j in soup.findAll('script'): 
             #we will look for the script in the page that has the url 
@@ -96,8 +96,8 @@ class Catalog:
                     break
             if found_url:
                 break
-                                                
-        html_content = urllib2.urlopen( base_page_url ).read() 
+
+        html_content = urllib2.urlopen( base_page_url ).read()
         soup = BS.BeautifulSoup( html_content )
         for i in soup.findAll('div', {"class":"video"}):
             #print "i.prettify", i.prettify()
@@ -127,9 +127,6 @@ class Catalog:
             #print video
             self.videos.append(video)
             #break
-        
-    except Exception, why:
+
+    except (Exception, why):
         self.error = why
-
-
-

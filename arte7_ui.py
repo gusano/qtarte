@@ -2,7 +2,7 @@
 
 # arte7_ui.py
 #
-# Date: Mon Oct  4 2010     
+# Date: Mon Oct  4 2010
 # Author : Vincent Vande Vyvre <vins@swing.be>
 # Version : 0.2
 #
@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         self.preview = Preview(self, MainWindow, self.splitter)
 
         self.editor = QtGui.QTextEdit(self.splitter)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, 
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
                                     QtGui.QSizePolicy.MinimumExpanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -67,7 +67,7 @@ class Ui_MainWindow(object):
         self.editor.setMaximumSize(QtCore.QSize(16777215, 150))
         self.editor.setAcceptDrops(False)
         self.editor.setUndoRedoEnabled(False)
-        self.editor.setAcceptRichText(True) 
+        self.editor.setAcceptRichText(True)
         self.editor.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|
                                     QtCore.Qt.TextSelectableByMouse)
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
@@ -172,7 +172,7 @@ class Ui_MainWindow(object):
         self.menu_Options.addAction(self.action_Settings)
         self.menu_File.addAction(self.action_Connection)
         self.menu_File.addAction(self.action_Download)
-        self.menu_File.addAction(self.action_Cancel) 
+        self.menu_File.addAction(self.action_Cancel)
         self.menu_File.addSeparator()
         self.menu_File.addAction(self.action_Quit)
         self.menu_Help.addAction(self.action_About)
@@ -197,11 +197,11 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         MainWindow.show()
-        self.editor.append(QtGui.QApplication.translate("MainWindow", 
-                        "\n\n    Connection to  http://arte7.arte.tv ...", None, 
+        self.editor.append(QtGui.QApplication.translate("MainWindow",
+                        "\n\n    Connection to  http://arte7.arte.tv ...", None,
                         QtGui.QApplication.UnicodeUTF8))
         QtCore.QCoreApplication.processEvents()
-        MainWindow.closeEvent = self.closeEvent       
+        MainWindow.closeEvent = self.closeEvent
 
         self.add_btn.clicked.connect(self.add_video)
         self.remove_btn.clicked.connect(self.remove_video)
@@ -212,13 +212,13 @@ class Ui_MainWindow(object):
         self.save_pitch_btn.clicked.connect(self.record_pitch)
         self.fake_btn.clicked.connect(self.progress_notify)
 
-        self.colors = ["Black", "Blue",   
-                    "Cyan", "Dark blue", 
+        self.colors = ["Black", "Blue",
+                    "Cyan", "Dark blue",
                     "Dark cyan", "Dark grey",
                     "Dark green", "Dark magenta",
                     "Dark red", "Dark yellow",
-                    "Grey", "Green", 
-                    "Light grey", "Magenta", 
+                    "Grey", "Green",
+                    "Light grey", "Magenta",
                     "Red", "White",
                     "Yellow"]
         self.set_buttons(False)
@@ -233,7 +233,7 @@ class Ui_MainWindow(object):
             os.mkdir(self.thumb_folder)
         self.config_file = os.path.join(self.user_folder, "config.cfg")
         if not os.path.isfile(self.config_file):
-            self.cfg = {"folder": "", "pitch": False, "color": 0, 
+            self.cfg = {"folder": "", "pitch": False, "color": 0,
                             "thumb1": 160, "thumb2": 80, "size": (900, 700)}
             try:
                 with open(self.config_file, "w") as objf:
@@ -260,18 +260,18 @@ class Ui_MainWindow(object):
         if self.active_download:
             mssg = QtGui.QMessageBox()
             mssg.setIcon(QtGui.QMessageBox.Question)
-            mssg.setText(QtGui.QApplication.translate("MainWindow", 
-                        "Downloading is not complete.", None, 
+            mssg.setText(QtGui.QApplication.translate("MainWindow",
+                        "Downloading is not complete.", None,
                         QtGui.QApplication.UnicodeUTF8))
-            mssg.setInformativeText(QtGui.QApplication.translate("MainWindow", 
-                        "Do you want to stop the loading  ?", None, 
+            mssg.setInformativeText(QtGui.QApplication.translate("MainWindow",
+                        "Do you want to stop the loading  ?", None,
                         QtGui.QApplication.UnicodeUTF8))
-            can = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
-                        "Cancel", None, 
+            can = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow",
+                        "Cancel", None,
                         QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(can, QtGui.QMessageBox.ActionRole)
-            qut = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
-                        "Quit", None, 
+            qut = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow",
+                        "Quit", None,
                         QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(qut, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
                     return
             self.cancel()
             time.sleep(1)
-            
+
         if self.index:
             try:
                 with open(self.thumb_folder + "/index", "w") as objfile:
@@ -340,12 +340,12 @@ class Ui_MainWindow(object):
             print "Fichier 'config.cfg' introuvable"
         else:
             self.cfg = c
-        #style = "".join(["QWidget {color: white; background: ", 
+        #style = "".join(["QWidget {color: white; background: ",
                                     #self.colors[self.cfg["color"]], "}"])
         #self.preview.setStyleSheet(style)
-        self.preview.setIconSize(QtCore.QSize(self.cfg["thumb1"], 
+        self.preview.setIconSize(QtCore.QSize(self.cfg["thumb1"],
                                     self.cfg["thumb1"]))
-        self.list_dwnld.setIconSize(QtCore.QSize(self.cfg["thumb2"], 
+        self.list_dwnld.setIconSize(QtCore.QSize(self.cfg["thumb2"],
                                     self.cfg["thumb2"]))
 
 
@@ -358,8 +358,8 @@ class Ui_MainWindow(object):
         if self.fatal_error:
             return
         f = os.path.join(self.user_folder, 'database')
-        self.editor.append(QtGui.QApplication.translate("MainWindow", 
-                        "    Reading contents ...", None, 
+        self.editor.append(QtGui.QApplication.translate("MainWindow",
+                        "    Reading contents ...", None,
                         QtGui.QApplication.UnicodeUTF8))
         if os.path.isfile(self.thumb_folder + "/index"):
             # Load index of pitchs
@@ -369,7 +369,7 @@ class Ui_MainWindow(object):
             except IOError:
                 self.index = {}
         else:
-           self.index = {} 
+           self.index = {}
 
         self.liststore = []
         self.sgl = Signal()
@@ -392,7 +392,7 @@ class Ui_MainWindow(object):
             img_ldr.start()
         else:
             self.next_thumbnail(self.thumb)
-        
+
 
 
     def next_thumbnail(self, thumb=None):
@@ -405,18 +405,18 @@ class Ui_MainWindow(object):
 
         if thumb == None:
             shutil.copy(os.path.join(self.user_folder, "image.jpg"), self.thumb)
- 
+
         img = self.create_icon()
         video_item.pixmap = img
-        
+
         item = QtGui.QListWidgetItem(self.preview)
         item.setIcon(QtGui.QIcon(img))
         text = self.set_thumbnail_text(video_item.title)
         item.setText(text)
         item.setTextAlignment(QtCore.Qt.AlignHCenter)
         item.setFlags(QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEnabled)
-        item.setToolTip(QtGui.QApplication.translate("MainWindow", 
-                        "Right click for show the summary.", None, 
+        item.setToolTip(QtGui.QApplication.translate("MainWindow",
+                        "Right click for show the summary.", None,
                         QtGui.QApplication.UnicodeUTF8))
         QtCore.QCoreApplication.processEvents()
         self.items.append(item)
@@ -424,7 +424,7 @@ class Ui_MainWindow(object):
 
         self.counter += 1
         if not len(self.liststore) == self.counter:
-            self.thumb = os.path.join(self.thumb_folder, 
+            self.thumb = os.path.join(self.thumb_folder,
                                     self.liststore[self.counter][1] + ".jpg")
             if not os.path.isfile(self.thumb):
                 fp = os.path.join(self.user_folder, "image.jpg")
@@ -555,13 +555,13 @@ class Ui_MainWindow(object):
         font.setPointSize(font.pointSize()+1)
         font.setBold(True)
         self.editor.setCurrentFont(font)
-        
+
         self.editor.append(self.videos[idx].title)
 
         font.setPointSize(font.pointSize()-1)
         font.setBold(False)
-        self.editor.setCurrentFont(font) 
-        t = "".join([self.videos[idx].date, 
+        self.editor.setCurrentFont(font)
+        t = "".join([self.videos[idx].date,
                         u"   durée : ", self.videos[idx].time, " min.\n"])
         self.editor.append(t)
         self.editor.append(self.videos[idx].pitch)
@@ -591,7 +591,7 @@ class Ui_MainWindow(object):
 
         Keyword arguments:
         idx -- index of movie
-        
+
         Return formated text
         """
         chain = "".join([self.videos[idx].title, "    ", self.videos[idx].time,
@@ -634,34 +634,34 @@ class Ui_MainWindow(object):
         if state == 1:
             title = str(self.list_dwnld.item(0).text())
             title.replace("\n", "")
-            self.editor.append(QtGui.QApplication.translate("MainWindow", 
-                        "Downloading %s ...." % title, None, 
-                        QtGui.QApplication.UnicodeUTF8))             
+            self.editor.append(QtGui.QApplication.translate("MainWindow",
+                        "Downloading %s ...." % title, None,
+                        QtGui.QApplication.UnicodeUTF8))
         elif state == 2:
             item = self.list_dwnld.item(0)
             self.list_dwnld.takeItem(0)
             self.list_dwnld.lst_movies.pop(0)
             del item
             self.editor.insertPlainText(QtGui.QApplication.translate
-                        ("MainWindow", "complete.", None, 
+                        ("MainWindow", "complete.", None,
                         QtGui.QApplication.UnicodeUTF8))
             self.active_download = False
             if self.cfg["pitch"]:
                 self.save_pitch()
         elif state == 3:
             self.editor.insertPlainText(QtGui.QApplication.translate
-                        ("MainWindow", "Canceled", None, 
+                        ("MainWindow", "Canceled", None,
                         QtGui.QApplication.UnicodeUTF8))
-            self.editor.append(QtGui.QApplication.translate("MainWindow", 
-                        "Downloading canceled.", None, 
+            self.editor.append(QtGui.QApplication.translate("MainWindow",
+                        "Downloading canceled.", None,
                         QtGui.QApplication.UnicodeUTF8))
             self.active_download = False
         elif isinstance(state, str):
-            self.editor.insert(QtGui.QApplication.translate("MainWindow", 
-                        "Stopped on error : %s", None, 
+            self.editor.insert(QtGui.QApplication.translate("MainWindow",
+                        "Stopped on error : %s", None,
                         QtGui.QApplication.UnicodeUTF8)) % state
             self.active_download = False
-        
+
 
     def progress_notify(self, val):
         """Update progress bar
@@ -700,17 +700,17 @@ class Ui_MainWindow(object):
         if name in os.listdir(self.cfg["folder"]):
             mssg = QtGui.QMessageBox()
             mssg.setIcon(QtGui.QMessageBox.Question)
-            mssg.setText(QtGui.QApplication.translate("MainWindow", 
-                        "A video of the same name already exists in the" 
+            mssg.setText(QtGui.QApplication.translate("MainWindow",
+                        "A video of the same name already exists in the"
                         " destination folder."
                         , None, QtGui.QApplication.UnicodeUTF8))
-            mssg.setInformativeText(QtGui.QApplication.translate("MainWindow", 
-                        "Do you want to replace the existing video?", 
+            mssg.setInformativeText(QtGui.QApplication.translate("MainWindow",
+                        "Do you want to replace the existing video?",
                         None, QtGui.QApplication.UnicodeUTF8))
-            can = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
+            can = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow",
                         "Cancel", None, QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(can, QtGui.QMessageBox.ActionRole)
-            rmp = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow", 
+            rmp = QtGui.QPushButton(QtGui.QApplication.translate("MainWindow",
                         "Replace", None, QtGui.QApplication.UnicodeUTF8))
             mssg.addButton(rmp, QtGui.QMessageBox.ActionRole)
             mssg.setDefaultButton(can)
@@ -778,8 +778,8 @@ class Ui_MainWindow(object):
                 continue
             item = self.list_dwnld.item(r)
             self.list_dwnld.takeItem(r)
-            self.list_dwnld.insertItem(r-1, item)             
-            self.list_dwnld.lst_movies.insert(r-1, 
+            self.list_dwnld.insertItem(r-1, item)
+            self.list_dwnld.lst_movies.insert(r-1,
                                     self.list_dwnld.lst_movies.pop(r))
             self.pitch.insert(r-1, self.pitch.pop(r))
             item.setSelected(True)
@@ -801,8 +801,8 @@ class Ui_MainWindow(object):
                 continue
             item = self.list_dwnld.item(r)
             self.list_dwnld.takeItem(r)
-            self.list_dwnld.insertItem(r+1, item)             
-            self.list_dwnld.lst_movies.insert(r+1, 
+            self.list_dwnld.insertItem(r+1, item)
+            self.list_dwnld.lst_movies.insert(r+1,
                                     self.list_dwnld.lst_movies.pop(r))
             self.pitch.insert(r+1, self.pitch.pop(r))
             item.setSelected(True)
@@ -859,17 +859,17 @@ class Ui_MainWindow(object):
     def on_error_data(self, msg):
         print "Error with database :", msg
         self.fatal_error = True
-        self.editor.append(QtGui.QApplication.translate("MainWindow", 
-                        "Error : %s " % msg, None, 
+        self.editor.append(QtGui.QApplication.translate("MainWindow",
+                        "Error : %s " % msg, None,
                         QtGui.QApplication.UnicodeUTF8))
-        self.editor.append(QtGui.QApplication.translate("MainWindow", 
-                        "Retry later." , None, 
+        self.editor.append(QtGui.QApplication.translate("MainWindow",
+                        "Retry later." , None,
                         QtGui.QApplication.UnicodeUTF8))
 
     #---------------------------------------
     # Household tasks
     #---------------------------------------
-            
+
     def set_buttons(self, b):
         """Set enable or desable tool buttons.
 
@@ -885,44 +885,44 @@ class Ui_MainWindow(object):
         clean.start()
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", 
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow",
                         "Arte7recorder", None, QtGui.QApplication.UnicodeUTF8))
-        self.menu_Options.setTitle(QtGui.QApplication.translate("MainWindow", 
+        self.menu_Options.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&Options", None, QtGui.QApplication.UnicodeUTF8))
-        self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow", 
+        self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&File", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_Help.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&Help", None, QtGui.QApplication.UnicodeUTF8))
-        self.add_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
-                        "Add the selected video.", None, 
+        self.add_btn.setStatusTip(QtGui.QApplication.translate("MainWindow",
+                        "Add the selected video.", None,
                         QtGui.QApplication.UnicodeUTF8))
-        self.remove_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
-                        "Remove selected video(s) from the list", None, 
+        self.remove_btn.setStatusTip(QtGui.QApplication.translate("MainWindow",
+                        "Remove selected video(s) from the list", None,
                         QtGui.QApplication.UnicodeUTF8))
-        self.up_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
+        self.up_btn.setStatusTip(QtGui.QApplication.translate("MainWindow",
                         "Move up.", None, QtGui.QApplication.UnicodeUTF8))
-        self.down_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
+        self.down_btn.setStatusTip(QtGui.QApplication.translate("MainWindow",
                         "Move down.", None, QtGui.QApplication.UnicodeUTF8))
         self.download_btn.setStatusTip(QtGui.QApplication.translate(
-                        "MainWindow", "Download now.", None, 
+                        "MainWindow", "Download now.", None,
                         QtGui.QApplication.UnicodeUTF8))
-        self.cancel_btn.setStatusTip(QtGui.QApplication.translate("MainWindow", 
-                        "Abort download.", None, 
+        self.cancel_btn.setStatusTip(QtGui.QApplication.translate("MainWindow",
+                        "Abort download.", None,
                         QtGui.QApplication.UnicodeUTF8))
         self.save_pitch_btn.setStatusTip(QtGui.QApplication.translate(
-                        "MainWindow", "Save the pitch.", None, 
+                        "MainWindow", "Save the pitch.", None,
                         QtGui.QApplication.UnicodeUTF8))
-        self.action_Settings.setText(QtGui.QApplication.translate("MainWindow", 
+        self.action_Settings.setText(QtGui.QApplication.translate("MainWindow",
                         "&Options", None, QtGui.QApplication.UnicodeUTF8))
-        self.action_Connection.setText(QtGui.QApplication.translate("MainWindow", 
+        self.action_Connection.setText(QtGui.QApplication.translate("MainWindow",
                         "&Connection", None, QtGui.QApplication.UnicodeUTF8))
-        self.action_About.setText(QtGui.QApplication.translate("MainWindow", 
+        self.action_About.setText(QtGui.QApplication.translate("MainWindow",
                         "&About", None, QtGui.QApplication.UnicodeUTF8))
-        self.action_Download.setText(QtGui.QApplication.translate("MainWindow", 
+        self.action_Download.setText(QtGui.QApplication.translate("MainWindow",
                         "&Download", None, QtGui.QApplication.UnicodeUTF8))
-        self.action_Cancel.setText(QtGui.QApplication.translate("MainWindow", 
+        self.action_Cancel.setText(QtGui.QApplication.translate("MainWindow",
                         "&Cancel", None, QtGui.QApplication.UnicodeUTF8))
-        self.action_Quit.setText(QtGui.QApplication.translate("MainWindow", 
+        self.action_Quit.setText(QtGui.QApplication.translate("MainWindow",
                         "&Quit", None, QtGui.QApplication.UnicodeUTF8))
 
 
@@ -942,7 +942,7 @@ class Preview(QtGui.QListWidget):
         self.setViewMode(QtGui.QListView.IconMode)
 
         #self.itemDoubleClicked.connect(ui.move_item)
-    
+
 
     def startDrag(self, event):
         #print "Mouse press event"
@@ -976,7 +976,7 @@ class Preview(QtGui.QListWidget):
         elif event.button() == 1:
             self.itemAt(event.pos()).setSelected(True)
             self.ui.add_btn.setEnabled(True)
-            event.accept()            
+            event.accept()
         elif event.button() == 2:
             self.itemAt(event.pos()).setSelected(True)
             self.ui.show_pitch()
@@ -990,7 +990,7 @@ class Preview(QtGui.QListWidget):
             event.accept()
         else:
             event.ignore()
-            
+
 
 
     def keyPressEvent(self, event):
@@ -1073,7 +1073,7 @@ class ListDwnld(QtGui.QListWidget):
             return
         img = self.ui.videos[idx].pixmap
         text = self.ui.set_thumbnail_text(self.ui.videos[idx].title)
-        pix = img.scaled(100, 100, QtCore.Qt.KeepAspectRatio, 
+        pix = img.scaled(100, 100, QtCore.Qt.KeepAspectRatio,
                                 QtCore.Qt.FastTransformation)
         item = QtGui.QListWidgetItem(self)
         item.setIcon(QtGui.QIcon(pix))
@@ -1100,7 +1100,7 @@ class VideoItem(QtCore.QObject):
 class Signal(QtCore.QObject):
     """Signal used by ImageLoader.
 
-    This signal is used by ImageLoader when a downloading of 
+    This signal is used by ImageLoader when a downloading of
     thumbnail is completed.
     """
     loadFinished = QtCore.pyqtSignal()
@@ -1110,7 +1110,7 @@ class Signal(QtCore.QObject):
         self.loadFinished.connect(self.next)
 
     def emit_signal(self):
-        self.loadFinished.emit() 
+        self.loadFinished.emit()
 
     def next(self):
         self.w.next_thumbnail()
@@ -1199,7 +1199,7 @@ class Cleaner(Thread):
 
             if rem:
                 if date in dk:
-                    del dindex[date]   
+                    del dindex[date]
                 os.remove(os.path.join(self.thumb, t))
                 x += 1
         try:
@@ -1207,7 +1207,7 @@ class Cleaner(Thread):
                 pickle.dump(dindex, objf)
         except Exception, why:
             print "Error in cleaner :", why
-        
+
 
 if __name__ == "__main__":
     cwd = os.path.split(sys.argv[0])[0]
@@ -1216,6 +1216,5 @@ if __name__ == "__main__":
     MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow, cwd)
-    
-    sys.exit(app.exec_())
 
+    sys.exit(app.exec_())
