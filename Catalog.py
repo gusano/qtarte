@@ -11,14 +11,6 @@ import BeautifulSoup as BS
 def unescape_html(text):
     return BS.BeautifulStoneSoup(text, convertEntities=BS.BeautifulStoneSoup.HTML_ENTITIES).contents[0]
 
-def get_lang():
-    lang = os.environ.get("LANG")
-    n = lang.split('_')
-    lang = "fr"
-    if n[0] in ("fr","de"):
-        lang = n[0]
-    return lang
-
 time_re = re.compile("^\d\d[h:]\d\d$")
 fr_monthes = ["janvier", "fevrier", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"]
 de_monthes = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"]
@@ -63,8 +55,8 @@ class Catalog:
   mmsRE = re.compile('"(mms.*)"')
   resumeRE = re.compile('<p class="text">([^<]*)<')
 
-  def __init__(self):
-    lang = "/%s/" % get_lang()
+  def __init__(self, lang):
+    lang = "/%s/" % lang
     max_video_displayed = 200 #Maximum number of videos to display
     self.error = False
     try:

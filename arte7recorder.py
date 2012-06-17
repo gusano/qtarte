@@ -12,10 +12,19 @@ import locale
 import gettext
 import BeautifulSoup as BS
 
-from Catalog import Catalog, unescape_html, get_lang
+from Catalog import Catalog, unescape_html
 from arte7_ui import*
 
 from PyQt4 import QtCore, QtGui
+
+import argparse
+
+parser = argparse.ArgumentParser(description='QTARTE: download arte+7 videos')
+parser.add_argument('-l', '--lang', help='choosen language (default: fr)',
+                    default='fr')
+
+args = parser.parse_args()
+
 
 subprocess_pid = None
 
@@ -31,7 +40,7 @@ def get_rtmp_url( url_page, quality ):
     movie_url = "http" + unescape_xml(movie['value'].split("http")[-1])
 
     xml_soup = BS.BeautifulStoneSoup(urllib2.urlopen(movie_url).read())
-    movie_url = xml_soup.find("video", {'lang': get_lang()})['ref']
+    movie_url = xml_soup.find("video", {'lang': args.lang})['ref']
 
     xml_soup = BS.BeautifulStoneSoup(urllib2.urlopen(movie_url).read())
     base_soup = xml_soup.find("urls")
@@ -232,7 +241,7 @@ class ProgressSignal(QtCore.QObject):
         self.ui.progress_notify(self.value)
 
 def make_connection():
-    catalog = Catalog()
+    catalog = Catalog(args.lang)
     f = os.path.join(ui.user_folder, 'database')
     if catalog.error:
         ui.on_error_data(catalog.error)
