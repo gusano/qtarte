@@ -28,7 +28,7 @@ def parse_date( date_str ):
         day = array[0].strip(".")
         month = array[1]
         for arr in (fr_monthes, de_monthes):
-            if array[1] in arr:
+            if array[1].encode('utf8') in arr:
                 month = "%02d" % (arr.index(array[1])+1)
         year = array[2]
         date_ = "%s %s %s" % (year, month, day)

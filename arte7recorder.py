@@ -1,4 +1,4 @@
-#!/usr/bin/env python 
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 
@@ -11,6 +11,7 @@ import pynotify
 import locale
 import gettext
 import BeautifulSoup as BS
+import codecs
 
 from Catalog import Catalog, unescape_html
 from arte7_ui import*
@@ -138,7 +139,6 @@ class Arte7(object):
         self.p_signal = ProgressSignal()
         self.p_signal.bind(ui)
 
-
         self.c_dir = os.getcwd()
         self.dirconf = self.c_dir
 
@@ -153,7 +153,7 @@ class Arte7(object):
 
     def notify(self, n_signal):
         img_uri = os.path.join(os.getcwd(), "medias/icon.png")
-        pynotify.init("Arte+7 Recorder")
+        #pynotify.init("Arte+7 Recorder")
         notification = pynotify.Notification(self.nom_emi, "Download complete", img_uri)
         notification.show()
         n_signal.value = 2
@@ -249,7 +249,7 @@ def make_connection():
         ui.on_error_data(catalog.error)
     else:
         try:
-            with open(f, 'w') as datalist:
+            with codecs.open(f, 'w', 'utf-8') as datalist:
                 datalist.write('\n'.join(['%s;%s;%s;%s' % (video[Catalog.TITLE_TAG],
                                     video[Catalog.DATE_TAG], video[Catalog.URL_TAG],
                                     video[Catalog.IMAGE_TAG])
