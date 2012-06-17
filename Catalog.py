@@ -100,7 +100,7 @@ class Catalog:
         html_content = urllib2.urlopen( base_page_url ).read() 
         soup = BS.BeautifulSoup( html_content )
         for i in soup.findAll('div', {"class":"video"}):
-            print "i.prettify", i.prettify()
+            #print "i.prettify", i.prettify()
             video = dict()
             for h in i.findAll('h2'):
                 for a in h.findAll('a'):
