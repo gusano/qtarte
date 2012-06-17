@@ -87,7 +87,7 @@
     </message>
     <message>
         <location filename="arte7_ui.py" line="418"/>
-        <source>Right click for show the summary.</source>
+        <source>Right click to show the summary.</source>
         <translation>Cliquez droit pour afficher le résumé.</translation>
     </message>
     <message>
