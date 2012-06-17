@@ -132,7 +132,7 @@ class Setting(object):
         try:
             with open(self.path, "w") as objf:
                 pickle.dump(self.cfg, objf)
-        except Exception, why:
+        except (Exception, why):
             print "Erreur de sauvegarde du fichier config.cfg :", why
         self.dialog.accept()
 
@@ -175,8 +175,8 @@ class Setting(object):
                 icon.addPixmap(QtGui.QPixmap(ico_paths[i]), 
                             QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.bckgrnd_cmb.addItem(icon, colors[i])
-            except Exception, why:
-                print "No icon", why
+            except (Exception):
+                print("No icon")
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", 
