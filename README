@@ -1,3 +1,24 @@
+### qtarte
+
+This is a git conversion of ~arte+7recorder/+junk/qtarte bzr repository (which
+does not seem to be maintained anymore).
+
+This program allows recording [arte+7](http://videos.arte.tv) videos.
+
+#### Dependencies
+
+ * python < 3
+ * PyQt >= 4.4
+
+#### Usage
+
+ * `$ cd qtarte`
+ * `$ python arte7recorder.py`
+
+
+
+### old README below
+
 
 **************  arte+7  Qt version  *************************
 
@@ -41,7 +62,7 @@ USAGE
 TODO
 ====
 
-    Translate to german 
+    Translate to german
     ...
     (Your ideas hier)
 
