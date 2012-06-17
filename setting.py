@@ -2,7 +2,7 @@
 
 # setting.py
 #
-# Date: Mon Oct  10 2010     
+# Date: Mon Oct  10 2010
 # Author : Vincent Vande Vyvre <vins@swing.be>
 #
 # Option dialog box for Arte7Recorder version Qt
@@ -36,7 +36,7 @@ class Setting(object):
         font.setBold(True)
         self.title_fr.setFont(font)
         self.horizontalLayout.addWidget(self.title_fr)
-        spacerItem = QtGui.QSpacerItem(178, 20, QtGui.QSizePolicy.Expanding, 
+        spacerItem = QtGui.QSpacerItem(178, 20, QtGui.QSizePolicy.Expanding,
                                 QtGui.QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout)
@@ -53,7 +53,7 @@ class Setting(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.pitch_chb = QtGui.QCheckBox(Dialog)
         self.horizontalLayout_3.addWidget(self.pitch_chb)
-        spacerItem1 = QtGui.QSpacerItem(118, 20, QtGui.QSizePolicy.Expanding, 
+        spacerItem1 = QtGui.QSpacerItem(118, 20, QtGui.QSizePolicy.Expanding,
                                 QtGui.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
@@ -63,7 +63,7 @@ class Setting(object):
         #self.bckgrnd_cmb = QtGui.QComboBox(Dialog)
         #self.bckgrnd_cmb.setMinimumSize(QtCore.QSize(160, 0))
         #self.horizontalLayout_4.addWidget(self.bckgrnd_cmb)
-        #spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, 
+        #spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding,
                                 #QtGui.QSizePolicy.Minimum)
         #self.horizontalLayout_4.addItem(spacerItem2)
         #self.verticalLayout.addLayout(self.horizontalLayout_4)
@@ -76,7 +76,7 @@ class Setting(object):
         self.thumb1_spb.setMaximum(200)
         self.thumb1_spb.setProperty("value", 160)
         self.gridLayout.addWidget(self.thumb1_spb, 0, 1, 1, 1)
-        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, 
+        spacerItem3 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding,
                                 QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem3, 0, 2, 1, 1)
         self.thumb2_lbl = QtGui.QLabel(Dialog)
@@ -87,7 +87,7 @@ class Setting(object):
         self.thumb2_spb.setMaximum(200)
         self.thumb2_spb.setProperty("value", 80)
         self.gridLayout.addWidget(self.thumb2_spb, 1, 1, 1, 1)
-        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, 
+        spacerItem4 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding,
                                 QtGui.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem4, 1, 2, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
@@ -103,9 +103,9 @@ class Setting(object):
         self.retranslateUi(Dialog)
         #self.set_color()
         self.get_config()
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"), 
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("accepted()"),
                                 self.set_config)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"), 
+        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL("rejected()"),
                                 Dialog.reject)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -138,8 +138,8 @@ class Setting(object):
 
     def get_folder(self):
         f = os.path.expanduser('~')
-        d = unicode(QtGui.QFileDialog.getExistingDirectory(None, 
-                            u"Choose destination folder", f, 
+        d = unicode(QtGui.QFileDialog.getExistingDirectory(None,
+                            u"Choose destination folder", f,
                             QtGui.QFileDialog.DontResolveSymlinks
                             | QtGui.QFileDialog.ShowDirsOnly))
 
@@ -149,13 +149,13 @@ class Setting(object):
 
 
     def set_color(self):
-        colors = ["Black", "Blue",   
-                    "Cyan", "Dark blue", 
+        colors = ["Black", "Blue",
+                    "Cyan", "Dark blue",
                     "Dark cyan", "Dark grey",
                     "Dark green", "Dark magenta",
                     "Dark red", "Dark yellow",
-                    "Grey", "Green", 
-                    "Light grey", "Magenta", 
+                    "Grey", "Green",
+                    "Light grey", "Magenta",
                     "Red", "White",
                     "Yellow"]
 
@@ -172,36 +172,36 @@ class Setting(object):
         for i in range(0, 17):
             try:
                 icon = QtGui.QIcon()
-                icon.addPixmap(QtGui.QPixmap(ico_paths[i]), 
+                icon.addPixmap(QtGui.QPixmap(ico_paths[i]),
                             QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.bckgrnd_cmb.addItem(icon, colors[i])
             except (Exception):
                 print("No icon")
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", 
-                                "arte7recorder", None, 
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog",
+                                "arte7recorder", None,
                                 QtGui.QApplication.UnicodeUTF8))
-        self.title_fr.setText(QtGui.QApplication.translate("Dialog", 
-                                "Settings", None, 
+        self.title_fr.setText(QtGui.QApplication.translate("Dialog",
+                                "Settings", None,
                                 QtGui.QApplication.UnicodeUTF8))
-        self.folder_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Videos folder :", None, 
+        self.folder_lbl.setText(QtGui.QApplication.translate("Dialog",
+                                "Videos folder :", None,
                                 QtGui.QApplication.UnicodeUTF8))
-        self.browse_btn.setText(QtGui.QApplication.translate("Dialog", 
-                                "Browser", None, 
+        self.browse_btn.setText(QtGui.QApplication.translate("Dialog",
+                                "Browser", None,
                                 QtGui.QApplication.UnicodeUTF8))
-        self.pitch_chb.setText(QtGui.QApplication.translate("Dialog",   
-                                "To record the summaries automatically.", 
+        self.pitch_chb.setText(QtGui.QApplication.translate("Dialog",
+                                "To record the summaries automatically.",
                                 None, QtGui.QApplication.UnicodeUTF8))
-        #self.bckgrnd_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                #"Background color :", None, 
+        #self.bckgrnd_lbl.setText(QtGui.QApplication.translate("Dialog",
+                                #"Background color :", None,
                                 #QtGui.QApplication.UnicodeUTF8))
-        self.thumb1_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Size of preview's thumbnails :", None, 
+        self.thumb1_lbl.setText(QtGui.QApplication.translate("Dialog",
+                                "Size of preview's thumbnails :", None,
                                 QtGui.QApplication.UnicodeUTF8))
-        self.thumb2_lbl.setText(QtGui.QApplication.translate("Dialog", 
-                                "Size of basket's thumbnails :", None, 
+        self.thumb2_lbl.setText(QtGui.QApplication.translate("Dialog",
+                                "Size of basket's thumbnails :", None,
                                 QtGui.QApplication.UnicodeUTF8))
 
 
@@ -213,4 +213,3 @@ if __name__ == "__main__":
     ui.setupUi(Dialog)
     Dialog.show()
     sys.exit(app.exec_())
-
