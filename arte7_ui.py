@@ -97,64 +97,64 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtGui.QHBoxLayout()
         self.add_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon = QtGui.QIcon()
-        print "medias :", cwd + "/medias/add.png", "CWD :", os.getcwd()
-        icon.addPixmap(QtGui.QPixmap(cwd + "/medias/add.png"), QtGui.QIcon.Normal, 
+        #print "medias :", cwd + "/medias/add.png", "CWD :", os.getcwd()
+        icon.addPixmap(QtGui.QPixmap(cwd + "/medias/add.png"), QtGui.QIcon.Normal,
                                     QtGui.QIcon.Off)
         self.add_btn.setIcon(icon)
         self.horizontalLayout.addWidget(self.add_btn)
         self.remove_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(cwd + "/medias/remove.png"), QtGui.QIcon.Normal, 
+        icon1.addPixmap(QtGui.QPixmap(cwd + "/medias/remove.png"), QtGui.QIcon.Normal,
                                     QtGui.QIcon.Off)
         self.remove_btn.setIcon(icon1)
         self.horizontalLayout.addWidget(self.remove_btn)
         self.up_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(cwd + "/medias/up.svg"), QtGui.QIcon.Normal, 
+        icon2.addPixmap(QtGui.QPixmap(cwd + "/medias/up.svg"), QtGui.QIcon.Normal,
                                     QtGui.QIcon.Off)
         self.up_btn.setIcon(icon2)
         self.horizontalLayout.addWidget(self.up_btn)
         self.down_btn = QtGui.QToolButton(self.dockWidgetContents)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(cwd + "/medias/down.svg"), QtGui.QIcon.Normal, 
+        icon3.addPixmap(QtGui.QPixmap(cwd + "/medias/down.svg"), QtGui.QIcon.Normal,
                                     QtGui.QIcon.Off)
         self.down_btn.setIcon(icon3)
         self.horizontalLayout.addWidget(self.down_btn)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.download_btn = QtGui.QToolButton(self.dockWidgetContents)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, 
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                     QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.download_btn.sizePolicy()
                                     .hasHeightForWidth())
         self.download_btn.setSizePolicy(sizePolicy)
-        self.download_btn.setText(QtGui.QApplication.translate("MainWindow", 
+        self.download_btn.setText(QtGui.QApplication.translate("MainWindow",
                         "Download", None, QtGui.QApplication.UnicodeUTF8))
         self.verticalLayout.addWidget(self.download_btn)
         self.prog_bar = QtGui.QProgressBar(self.dockWidgetContents)
         self.prog_bar.setProperty("value", 0)
         self.verticalLayout.addWidget(self.prog_bar)
         self.cancel_btn = QtGui.QToolButton(self.dockWidgetContents)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, 
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                     QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.cancel_btn.sizePolicy()
                                     .hasHeightForWidth())
         self.cancel_btn.setSizePolicy(sizePolicy)
-        self.cancel_btn.setText(QtGui.QApplication.translate("MainWindow", 
+        self.cancel_btn.setText(QtGui.QApplication.translate("MainWindow",
                         "Cancel", None, QtGui.QApplication.UnicodeUTF8))
         self.verticalLayout.addWidget(self.cancel_btn)
         self.save_pitch_btn = QtGui.QToolButton(self.dockWidgetContents)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, 
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred,
                                     QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.save_pitch_btn.sizePolicy()
                                     .hasHeightForWidth())
         self.save_pitch_btn.setSizePolicy(sizePolicy)
-        self.save_pitch_btn.setText(QtGui.QApplication.translate("MainWindow", 
+        self.save_pitch_btn.setText(QtGui.QApplication.translate("MainWindow",
                         "Save text", None, QtGui.QApplication.UnicodeUTF8))
         self.save_pitch_btn.setEnabled(False)
         self.verticalLayout.addWidget(self.save_pitch_btn)
@@ -994,7 +994,8 @@ class Preview(QtGui.QListWidget):
 
 
     def keyPressEvent(self, event):
-        print "Key :", event.key()
+        pass
+        #print("Key :", event.key())
 
 
     def resizeEvent(self, event):
