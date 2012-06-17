@@ -175,7 +175,7 @@ class Setting(object):
                 icon.addPixmap(QtGui.QPixmap(ico_paths[i]),
                             QtGui.QIcon.Normal, QtGui.QIcon.Off)
                 self.bckgrnd_cmb.addItem(icon, colors[i])
-            except (Exception):
+            except Exception:
                 print("No icon")
 
     def retranslateUi(self, Dialog):
