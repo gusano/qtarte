@@ -7,7 +7,7 @@ import os, subprocess, shutil, select
 import signal
 import re
 import urllib2, xml.dom.minidom
-import pynotify 
+import pynotify
 import locale
 import gettext
 import BeautifulSoup as BS
@@ -103,9 +103,9 @@ def rtmp_download( link, destination = "/dev/null", try_resume = True, resuming 
                 max_skip_cnt -= 1
                 cmd = cmd_resume_skip
             else:
-                print ret_code
-                print whole_stderr_buff
-                print
+                print(ret_code)
+                print(whole_stderr_buff)
+                print()
                 yield -1.0
         ret_code = None
 
@@ -129,7 +129,7 @@ class Arte7(object):
 
 
         self.c_dir = os.getcwd()
-        self.dirconf = self.c_dir 
+        self.dirconf = self.c_dir
 
         while 1:
             if not ui.cfg["folder"]:
@@ -179,14 +179,14 @@ class Arte7(object):
                         if subprocess_pid is not None:
                             os.kill( subprocess_pid, signal.SIGINT )
                             n_signal.value = 3
-                            n_signal.emit_signal() 
+                            n_signal.emit_signal()
                             break
 
-            except IOError, why:
-                print "Download error :", why
+            except (IOError, why):
+                print("Download error :", why)
                 n_signal.value = why
                 n_signal.emit_signal()
-                                           
+
             else:
                 if signal_fin :
                     self.notify(n_signal)
@@ -196,7 +196,7 @@ class Arte7(object):
 class NotifySignal(QtCore.QObject):
     """Signal used by on_telecharge function.
 
-    This signal is used by telecharge when a downloading of 
+    This signal is used by telecharge when a downloading of
     movie is completed.
     """
     loadFinished = QtCore.pyqtSignal()
@@ -207,7 +207,7 @@ class NotifySignal(QtCore.QObject):
         self.loadFinished.connect(self.next)
 
     def emit_signal(self):
-        self.loadFinished.emit() 
+        self.loadFinished.emit()
 
     def next(self):
         self.ui.download_notify(self.value)
@@ -215,18 +215,18 @@ class NotifySignal(QtCore.QObject):
 class ProgressSignal(QtCore.QObject):
     """Signal used by on_telecharge function.
 
-    This signal is used by telechage when a downloading of 
+    This signal is used by telechage when a downloading of
     movie is completed.
     """
     loadProgress = QtCore.pyqtSignal()
-             
+
     def bind(self, ui):
         self.ui = ui
         self.value = None
         self.loadProgress.connect(self.next)
 
     def emit_signal(self):
-        self.loadProgress.emit() 
+        self.loadProgress.emit()
 
     def next(self):
         self.ui.progress_notify(self.value)
@@ -239,11 +239,11 @@ def make_connection():
     else:
         try:
             with open(f, 'w') as datalist:
-                datalist.write('\n'.join(['%s;%s;%s;%s' % (video[Catalog.TITLE_TAG], 
-                                    video[Catalog.DATE_TAG], video[Catalog.URL_TAG], 
-                                    video[Catalog.IMAGE_TAG]) 
+                datalist.write('\n'.join(['%s;%s;%s;%s' % (video[Catalog.TITLE_TAG],
+                                    video[Catalog.DATE_TAG], video[Catalog.URL_TAG],
+                                    video[Catalog.IMAGE_TAG])
                                     for video in catalog.videos]))
-        except IOError, why:
+        except (IOError, why):
             ui.on_error_data(why)
 
 
@@ -263,19 +263,7 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow, cwd)
     make_connection()
-    
+
     arte = Arte7()
-    
+
     sys.exit(app.exec_())
-
-
-
-
-
-
-
-
-
-
-
-
