@@ -679,7 +679,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
         """
         self.prog_bar.setValue(val)
         if val == 100:
-            self.trayIcon.showMessage(self.current_movie, 'Download complete')
+            self.trayIcon.showMessage(self.current_movie, 'Download complete',
+                                      QtGui.QSystemTrayIcon.Information, 4000)
 
 
     def save_pitch(self, sel=None):
