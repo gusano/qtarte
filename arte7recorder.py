@@ -199,8 +199,9 @@ class Arte7(object):
                 n_signal.emit_signal()
 
             else:
-                if signal_fin :
-                    self.notify(n_signal)
+                if signal_fin:
+                    #self.notify(n_signal)
+                    pass
         # Kill the gui thread
         ui.stop = True
 
@@ -259,8 +260,7 @@ def make_connection():
 
 
 
-def main():
-    cwd = os.path.split(sys.argv[0])[0]
+if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     ## Translation process
     loc = QtCore.QLocale.system().name()
@@ -277,6 +277,3 @@ def main():
     arte = Arte7()
 
     sys.exit(app.exec_())
-
-if __name__ == '__main__':
-    main()

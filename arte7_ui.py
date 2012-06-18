@@ -49,8 +49,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
     def __init__(self, parent = None):
         QtGui.QMainWindow.__init__(self, parent)
-        #QtGui.QMainWindow.setObjectName("MainWindow")
-        cwd = os.path.split(sys.argv[0])[0]
+        cwd = os.path.dirname(os.path.abspath(__file__))
         self.resize(1100, 700)
         self.centralwidget = QtGui.QWidget(self)
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
