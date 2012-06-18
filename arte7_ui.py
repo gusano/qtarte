@@ -45,16 +45,19 @@ from setting import*
 
 from PyQt4 import QtCore, QtGui
 
-class Ui_MainWindow(object):
-    def setupUi(self, MainWindow, cwd):
-        MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1100, 700)
-        self.centralwidget = QtGui.QWidget(MainWindow)
+class Ui_MainWindow(QtGui.QMainWindow):
+
+    def __init__(self, parent = None):
+        QtGui.QMainWindow.__init__(self, parent)
+        #QtGui.QMainWindow.setObjectName("MainWindow")
+        cwd = os.path.split(sys.argv[0])[0]
+        self.resize(1100, 700)
+        self.centralwidget = QtGui.QWidget(self)
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.splitter = QtGui.QSplitter(self.centralwidget)
         self.splitter.setOrientation(QtCore.Qt.Vertical)
         self.splitter.setChildrenCollapsible(True)
-        self.preview = Preview(self, MainWindow, self.splitter)
+        self.preview = Preview(self, self, self.splitter)
 
         self.editor = QtGui.QTextEdit(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
@@ -71,18 +74,18 @@ class Ui_MainWindow(object):
         self.editor.setTextInteractionFlags(QtCore.Qt.TextSelectableByKeyboard|
                                     QtCore.Qt.TextSelectableByMouse)
         self.gridLayout.addWidget(self.splitter, 0, 0, 1, 1)
-        MainWindow.setCentralWidget(self.centralwidget)
-        self.menubar = QtGui.QMenuBar(MainWindow)
+        self.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(self)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 717, 25))
         self.menu_Options = QtGui.QMenu(self.menubar)
         self.menu_File = QtGui.QMenu(self.menubar)
         self.menu_Help = QtGui.QMenu(self.menubar)
-        MainWindow.setMenuBar(self.menubar)
-        self.statusbar = QtGui.QStatusBar(MainWindow)
-        MainWindow.setStatusBar(self.statusbar)
+        self.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(self)
+        self.setStatusBar(self.statusbar)
 
         # Tool panel
-        self.tool_panel = QtGui.QDockWidget(MainWindow)
+        self.tool_panel = QtGui.QDockWidget(self)
         self.tool_panel.setAllowedAreas(QtCore.Qt.LeftDockWidgetArea|
                                     QtCore.Qt.RightDockWidgetArea)
         self.tool_panel.setWindowTitle("None")
@@ -162,13 +165,13 @@ class Ui_MainWindow(object):
         self.fake_btn.hide()
         self.verticalLayout_2.addLayout(self.verticalLayout)
         self.tool_panel.setWidget(self.dockWidgetContents)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.tool_panel)
-        self.action_Settings = QtGui.QAction(MainWindow)
-        self.action_Connection = QtGui.QAction(MainWindow)
-        self.action_About = QtGui.QAction(MainWindow)
-        self.action_Download = QtGui.QAction(MainWindow)
-        self.action_Cancel = QtGui.QAction(MainWindow)
-        self.action_Quit = QtGui.QAction(MainWindow)
+        self.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.tool_panel)
+        self.action_Settings = QtGui.QAction(self)
+        self.action_Connection = QtGui.QAction(self)
+        self.action_About = QtGui.QAction(self)
+        self.action_Download = QtGui.QAction(self)
+        self.action_Cancel = QtGui.QAction(self)
+        self.action_Quit = QtGui.QAction(self)
         self.menu_Options.addAction(self.action_Settings)
         self.menu_File.addAction(self.action_Connection)
         self.menu_File.addAction(self.action_Download)
@@ -194,14 +197,14 @@ class Ui_MainWindow(object):
                                 ("triggered()"), self.closeEvent)
 
 
-        self.retranslateUi(MainWindow)
-        QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        MainWindow.show()
+        self.retranslateUi()
+        QtCore.QMetaObject.connectSlotsByName(self)
+        self.show()
         self.editor.append(QtGui.QApplication.translate("MainWindow",
                         "\n\n    Connection to  http://arte7.arte.tv ...", None,
                         QtGui.QApplication.UnicodeUTF8))
         QtCore.QCoreApplication.processEvents()
-        MainWindow.closeEvent = self.closeEvent
+        self.closeEvent = self.closeEvent
 
         self.add_btn.clicked.connect(self.add_video)
         self.remove_btn.clicked.connect(self.remove_video)
@@ -242,7 +245,7 @@ class Ui_MainWindow(object):
                 print("Error while saving file config.cfg :", e)
         self.update_gui()
         if self.cfg.has_key("size"):
-            MainWindow.resize(self.cfg["size"][0], self.cfg["size"][1])
+            self.resize(self.cfg["size"][0], self.cfg["size"][1])
         self.arte = None
         self.stop = False
         self.fatal_error = False
@@ -251,6 +254,7 @@ class Ui_MainWindow(object):
 
     def nihil(self):
         pass
+
     #---------------------------------------
     # Events
     #---------------------------------------
@@ -876,8 +880,8 @@ class Ui_MainWindow(object):
         clean = Cleaner(self)
         clean.start()
 
-    def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow",
+    def retranslateUi(self):
+        self.setWindowTitle(QtGui.QApplication.translate("MainWindow",
                         "Arte7recorder", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_Options.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&Options", None, QtGui.QApplication.UnicodeUTF8))
@@ -1203,8 +1207,8 @@ if __name__ == "__main__":
     cwd = os.path.split(sys.argv[0])[0]
     import sys
     app = QtGui.QApplication(sys.argv)
-    MainWindow = QtGui.QMainWindow()
+#    MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow, cwd)
+#    ui.setupUi(MainWindow, cwd)
 
     sys.exit(app.exec_())

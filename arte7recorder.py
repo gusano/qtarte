@@ -270,9 +270,9 @@ if __name__ == "__main__":
     appTranslator = QtCore.QTranslator()
     if appTranslator.load("arte7recorder_" + loc):
         app.installTranslator(appTranslator)
-    MainWindow = QtGui.QMainWindow()
+    #MainWindow = QtGui.QMainWindow()
     ui = Ui_MainWindow()
-    ui.setupUi(MainWindow, cwd)
+    #ui.setupUi(MainWindow, cwd)
     make_connection()
 
     arte = Arte7()
