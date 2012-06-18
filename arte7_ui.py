@@ -58,6 +58,10 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.splitter.setChildrenCollapsible(True)
         self.preview = Preview(self, self, self.splitter)
 
+        self.trayIcon = QtGui.QSystemTrayIcon(self)
+        self.trayIcon.setIcon(QtGui.QIcon(cwd + "/arte+7-qt.png"))
+        self.trayIcon.show()
+
         self.editor = QtGui.QTextEdit(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
                                     QtGui.QSizePolicy.MinimumExpanding)
@@ -82,6 +86,9 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(self)
         self.setStatusBar(self.statusbar)
+
+        # for notification
+        self.current_movie = ''
 
         # Tool panel
         self.tool_panel = QtGui.QDockWidget(self)
@@ -636,6 +643,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         if state == 1:
             title = str(self.list_dwnld.item(0).text())
             title.replace("\n", "")
+            self.current_movie = title
             self.editor.append(QtGui.QApplication.translate("MainWindow",
                         "Downloading %s ...." % title, None,
                         QtGui.QApplication.UnicodeUTF8))
@@ -670,6 +678,8 @@ class Ui_MainWindow(QtGui.QMainWindow):
 
         """
         self.prog_bar.setValue(val)
+        if val == 100:
+            self.trayIcon.showMessage(self.current_movie, 'Download complete')
 
 
     def save_pitch(self, sel=None):

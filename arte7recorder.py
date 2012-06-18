@@ -7,7 +7,6 @@ import os, subprocess, shutil, select
 import signal
 import re
 import urllib2, xml.dom.minidom
-import pynotify
 import locale
 import gettext
 import BeautifulSoup as BS
@@ -151,15 +150,6 @@ class Arte7(object):
         if not os.path.isdir(self.directory):
             os.mkdir(self.directory)
 
-    def notify(self, n_signal):
-        img_uri = os.path.join(os.getcwd(), "medias/icon.png")
-        #pynotify.init("Arte+7 Recorder")
-        notification = pynotify.Notification(self.nom_emi, "Download complete", img_uri)
-        notification.show()
-        n_signal.value = 2
-        n_signal.emit_signal()
-        return
-
 
     def set_options(self, f):
         return True
@@ -198,10 +188,6 @@ class Arte7(object):
                 n_signal.value = e
                 n_signal.emit_signal()
 
-            else:
-                if signal_fin:
-                    #self.notify(n_signal)
-                    pass
         # Kill the gui thread
         ui.stop = True
 
