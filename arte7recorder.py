@@ -259,7 +259,7 @@ def make_connection():
 
 
 
-if __name__ == "__main__":
+def main():
     cwd = os.path.split(sys.argv[0])[0]
     app = QtGui.QApplication(sys.argv)
     ## Translation process
@@ -270,11 +270,13 @@ if __name__ == "__main__":
     appTranslator = QtCore.QTranslator()
     if appTranslator.load("arte7recorder_" + loc):
         app.installTranslator(appTranslator)
-    #MainWindow = QtGui.QMainWindow()
+
     ui = Ui_MainWindow()
-    #ui.setupUi(MainWindow, cwd)
     make_connection()
 
     arte = Arte7()
 
     sys.exit(app.exec_())
+
+if __name__ == '__main__':
+    main()
