@@ -607,7 +607,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                         " min.\n"])
         pitch = self.videos[idx].pitch
         if not pitch:
-            summary = "\tPas de description."
+            summary = "\tNo description."
         elif len(pitch) < 85:
             summary = "\t" + pitch + "\n"
         else:
