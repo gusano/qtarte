@@ -152,7 +152,6 @@ class Arte7(object):
 
 
     def notify(self, n_signal):
-        img_uri = os.path.join(os.getcwd(), "medias/icon.png")
         n_signal.value = 2
         n_signal.emit_signal()
         return
