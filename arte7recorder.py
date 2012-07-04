@@ -151,6 +151,12 @@ class Arte7(object):
             os.mkdir(self.directory)
 
 
+    def notify(self, n_signal):
+        img_uri = os.path.join(os.getcwd(), "medias/icon.png")
+        n_signal.value = 2
+        n_signal.emit_signal()
+        return
+
     def set_options(self, f):
         return True
 
@@ -187,6 +193,10 @@ class Arte7(object):
                 print("Download error :", e)
                 n_signal.value = e
                 n_signal.emit_signal()
+
+            else:
+                if signal_fin:
+                    self.notify(n_signal)
 
         # Kill the gui thread
         ui.stop = True

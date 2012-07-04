@@ -673,14 +673,20 @@ class Ui_MainWindow(QtGui.QMainWindow):
             self.active_download = False
 
 
+    def complete_notify(self):
+        """Display a popup message with completed movie name
+        """
+        self.trayIcon.showMessage(self.current_movie, 'Download complete',
+                                  QtGui.QSystemTrayIcon.Information, 4000)
+
+
     def progress_notify(self, val):
         """Update progress bar
 
         """
         self.prog_bar.setValue(val)
         if val == 100:
-            self.trayIcon.showMessage(self.current_movie, 'Download complete',
-                                      QtGui.QSystemTrayIcon.Information, 4000)
+            self.complete_notify()
 
 
     def save_pitch(self, sel=None):
