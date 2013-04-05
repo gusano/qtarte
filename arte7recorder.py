@@ -78,7 +78,7 @@ def rtmp_download( link, destination = "/dev/null", try_resume = True, resuming 
         stderr_buff = ""
         whole_stderr_buff = ""
         p = subprocess.Popen( cmd, shell=True, stderr=subprocess.PIPE, close_fds=True)
-        subprocess_pid = p.pid + 1
+        subprocess_pid = p.pid
         while ret_code is None:
             fds_read, fds_write, fds_exception = select.select([p.stderr],[], [], SECONDS_TO_WAIT)
             if len(fds_read) == 1:
