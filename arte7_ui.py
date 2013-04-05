@@ -455,7 +455,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         Return:
         thumbnail
         """
-        img = QtGui.QPixmap(unicode(self.thumb))
+        img = QtGui.QPixmap(self.thumb)
         w = float(QtCore.QSize.width(img.size()))
         h = float(QtCore.QSize.height(img.size()))
         #black border
@@ -641,7 +641,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
                                        str : error
         """
         if state == 1:
-            title = str(self.list_dwnld.item(0).text())
+            title = unicode(self.list_dwnld.item(0).text())
             title.replace("\n", "")
             self.current_movie = title
             self.editor.append(QtGui.QApplication.translate("MainWindow",
