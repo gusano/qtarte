@@ -902,7 +902,7 @@ class Ui_MainWindow(QtGui.QMainWindow):
         self.menu_Options.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&Options", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow",
-                        "&File", None, QtGui.QApplication.UnicodeUTF8))
+                        QtCore.QCoreApplication.translate("A", "File"), None, QtGui.QApplication.UnicodeUTF8))
         self.menu_Help.setTitle(QtGui.QApplication.translate("MainWindow",
                         "&Help", None, QtGui.QApplication.UnicodeUTF8))
         self.add_btn.setStatusTip(QtGui.QApplication.translate("MainWindow",

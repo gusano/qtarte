@@ -63,7 +63,7 @@
     Connection to  http://arte7.arte.tv ...</source>
         <translation>
 
-... Connexion à http://arte7.arte.tv ...</translation>
+... Connexion à http://videos.arte.tv ...</translation>
     </message>
     <message>
         <location filename="arte7_ui.py" line="263"/>
